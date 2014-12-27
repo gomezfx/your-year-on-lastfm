@@ -8,5 +8,5 @@ page.onConsoleMessage = function(message) {
 page.open("http://localhost:8000/index.html", function() {
   window.setTimeout(function () {
     phantom.exit();
-  }, 10000);
+  }, 15000);
 });

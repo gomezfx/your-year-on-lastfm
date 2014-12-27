@@ -2,11 +2,56 @@ function log(message) {
   console.log(message);
 };
 
+function User(name, avatarSource) {
+  this.name = name;
+  this.avatarSource = avatarSource;
+};
+
+function Chart(to, from) {
+  this.to = to;
+  this.from = from;
+};
+
+function Track(name, artist, album, playCount) {
+  this.name = name;
+  this.artist = artist;
+  this.album = album;
+  this.playCount = playCount;
+};
+
+function Album(name, artist, artSource) {
+  this.name = name;
+  this.artist = artist;
+  this.artSource = artSource;
+};
+
 var LastFmApiClient = function() {
   this.API_KEY = Config.API_KEY;
   this.SECRET = Config.SECRET;
   this.BASE_URL = "http://ws.audioscrobbler.com";
   this.FORMAT = "json";
+};
+
+LastFmApiClient.prototype.getInfo = function(user) {
+  var deferred = Q.defer();
+  var endpoint = this.BASE_URL;
+  endpoint += "/2.0/?method=user.getinfo";
+  endpoint += "&format=" + this.FORMAT;
+  endpoint += "&api_key=" + this.API_KEY;
+  endpoint += "&user=" + user;
+
+  $.get(endpoint, function(data) {
+    var json = JSON.stringify(data);
+    var parsed = JSON.parse(json);
+    var name = parsed.user.name;
+    var avatarSource = parsed.user.image[2]['#text'];
+    console.log(avatarSource);
+    var user = new User(name, avatarSource);
+
+    deferred.resolve(user);
+  });
+
+  return deferred.promise;
 };
 
 LastFmApiClient.prototype.getWeeklyChartList = function(user) {
@@ -20,14 +65,17 @@ LastFmApiClient.prototype.getWeeklyChartList = function(user) {
   $.get(endpoint, function(data) {
     var json = JSON.stringify(data);
     var parsed = JSON.parse(json);
-    var dates = [];
+    var charts = [];
     var length = parsed.weeklychartlist.chart.length;
 
     for (var i = 0 ; i < length; i++) {
-      dates.push(parsed.weeklychartlist.chart[i]);
+      var to = parseInt(parsed.weeklychartlist.chart[i].to);
+      var from = parseInt(parsed.weeklychartlist.chart[i].from);
+      var chart = new Chart(to, from);
+      charts.push(chart);
     }
 
-    deferred.resolve(dates);
+    deferred.resolve(charts);
   });
 
   return deferred.promise;
@@ -67,6 +115,7 @@ LastFmApiClient.prototype.getWeeklyTrackChart = function(user, from, to) {
 var YEAR_START = 1388534400;
 var YEAR_END = 1420070400;
 
+/*
 var client = new LastFmApiClient();
 client.getWeeklyChartList("gomezfx").then(function (dates) {
   var results = [];
@@ -111,3 +160,4 @@ client.getWeeklyChartList("gomezfx").then(function (dates) {
     log(JSON.stringify(tracks[i]), undefined, 2);
   }
 });
+*/
