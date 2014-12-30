@@ -12,17 +12,16 @@ function Chart(to, from) {
   this.from = from;
 };
 
-function Track(name, artist, album, playCount) {
+function Track(name, artist, playCount) {
   this.name = name;
   this.artist = artist;
-  this.album = album;
   this.playCount = playCount;
 };
 
-function Album(name, artist, artSource) {
+function Album(name, artist, playCount) {
   this.name = name;
   this.artist = artist;
-  this.artSource = artSource;
+  this.playCount = playCount;
 };
 
 var LastFmApiClient = function() {
@@ -45,7 +44,6 @@ LastFmApiClient.prototype.getInfo = function(user) {
     var parsed = JSON.parse(json);
     var name = parsed.user.name;
     var avatarSource = parsed.user.image[2]['#text'];
-    console.log(avatarSource);
     var user = new User(name, avatarSource);
 
     deferred.resolve(user);
@@ -103,7 +101,12 @@ LastFmApiClient.prototype.getWeeklyTrackChart = function(user, from, to) {
     }
 
     for (var i = 0; i < length; i++) {
-      tracks.push(parsed.weeklytrackchart.track[i]);
+      var itr = parsed.weeklytrackchart.track[i];
+      var name = itr.name;
+      var artist = itr.artist;
+      var playCount = parseInt(itr.playcount);
+      var track = new Track(name, artist, playCount);
+      tracks.push(track);
     }
 
     deferred.resolve(tracks);
@@ -112,8 +115,43 @@ LastFmApiClient.prototype.getWeeklyTrackChart = function(user, from, to) {
   return deferred.promise;
 };
 
-var YEAR_START = 1388534400;
-var YEAR_END = 1420070400;
+LastFmApiClient.prototype.getWeeklyAlbumChart = function(user, from, to) {
+  var deferred = Q.defer();
+  var endpoint = this.BASE_URL;
+  endpoint += "/2.0/?method=user.getweeklyalbumchart";
+  endpoint += "&format=" + this.FORMAT;
+  endpoint += "&api_key=" + this.API_KEY;
+  endpoint += "&user=" + user;
+  endpoint += "&to=" + to;
+  endpoint += "&from=" + from;
+
+  $.get(endpoint, function(data) {
+    var json = JSON.stringify(data);
+    var parsed = JSON.parse(json);
+    var albums = [];
+    var length;
+    if (!parsed.hasOwnProperty('weeklyalbumchart')) {
+      length = 0;
+    }
+    else if (parsed.weeklyalbumchart.album === undefined) {
+      length = 0;
+    } else {
+      length = parsed.weeklyalbumchart.album.length;
+    }
+
+    for (var i = 0; i < length; i++) {
+      var itr = parsed.weeklyalbumchart.album[i];
+      var name = itr.name;
+      var artist = itr.artist['#text']
+      var playCount = parseInt(itr.playcount);
+      var album = new Album(name, artist, playCount);
+      albums.push(album);
+    }
+
+    deferred.resolve(albums);
+  });
+
+  return deferred.promise;};
 
 /*
 var client = new LastFmApiClient();

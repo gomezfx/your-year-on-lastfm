@@ -3,12 +3,20 @@
     src: url(FuturaLT-Heavy.ttf);
 }
 
+@font-face {
+  font-family: Johanna-Italic;
+  src: url(Johanna-Italic.ttf);
+}
+
 body, html {
   background-color: #ffffff;
   height: 100%;
-  padding: 0px;
   margin: 0px;
   width: 100%;
+}
+
+div {
+  text-align: center;
 }
 
 .container {
@@ -18,10 +26,9 @@ body, html {
 }
 
 .half-container {
-  height: 50%;
+  height: 100%;
   width: 50%;
   text-align: center;
-  background-color: #000000;
   float: left;
 }
 
@@ -55,4 +62,43 @@ body, html {
   font-weight: bold;
   letter-spacing: 10px;
   text-transform: uppercase;
+}
+
+.album {
+  background-color: #000000;
+  height: 650px;
+  margin: 25px;
+  padding: 0px;
+  width: 650px;
+}
+
+.album-number {
+  color: #303f9f;
+  font-family: Futura;
+  font-size: 72px;
+  font-weight: bold;
+}
+
+.album-name {
+  color: #000000;
+  font-family: Futura;
+  font-size: 32px;
+  font-weight: bold;
+  letter-spacing: 10px;
+  text-transform: uppercase;;
+}
+
+.album-artist {
+  color: #000000;
+  font-family: Futura;
+  font-size: 18px;
+  font-weight: bold;
+  letter-spacing: 10px;
+  text-transform: uppercase;
+}
+
+.subtext {
+  color: #000000;
+  font-family: Johanna-Italic;
+  font-size: 12px;
 }
