@@ -6,8 +6,8 @@
     <div id="main">
       <div class="container">
         <div class="vertical-center">
-          <div class="horizontal-center circular" style="background: url({{ avatarSource }}) no-repeat center; background-size: cover;"></div>
-          <span class="username">{{ username }}</span>
+          <div v-show="initialized" v-transition class="horizontal-center circular" style="background: url({{ avatarSource }}) no-repeat center; background-size: cover;"></div>
+          <div v-show="initialized" v-transition class="username slide-text-bottom">{{ username }}</div>
         </div>
       </div>
       <album-component v-repeat="album : albums"></album-component>
