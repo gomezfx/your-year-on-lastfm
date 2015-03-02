@@ -1,8 +1,8 @@
 var AlbumComponent = Vue.extend({
   template:
-    '<div class="container">' +
-      '<div class="album-container">' +
-        '<div class="vertical-center">' +
+    '<div class="row max-height">' +
+      '<div class="wrapper vertical-center">' +
+        '<div class="col-md-6 vertical-center">' +
           '<div class="album-info">' +
             '<span class="album-number">{{ $index + 1}}</span><br><br>' +
             '<span class="album-name">{{ album.name }}</span><br><br>' +
@@ -10,10 +10,8 @@ var AlbumComponent = Vue.extend({
             '<span class="album-artist">{{ album.artist }}</span>' +
           '</div>' +
         '</div>' +
-      '</div>' +
-      '<div class="album-container">' +
-        '<div class="vertical-center">' +
-          '<div class="album-art"></div>' +
+        '<div class="col-md-6 vertical-center">' +
+          '<img class=" horizontal-center img-responsive" src="sample.jpg"></img>' +
         '</div>' +
       '</div>' +
     '</div>'
@@ -87,6 +85,8 @@ var main = new Vue({
 
         for(var i = 0; i < 5; i++) {
           self.albums.push(albumArray[i]);
+          console.log(i + " " + albumArray[i].mbId);
+          client.getAlbumInfo(albumArray[i].artist, albumArray[i].name);
         }        
       });
     }

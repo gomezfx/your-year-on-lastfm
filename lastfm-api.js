@@ -18,10 +18,11 @@ function Track(name, artist, playCount) {
   this.playCount = playCount;
 };
 
-function Album(name, artist, playCount) {
+function Album(name, artist, playCount, mbId) {
   this.name = name;
   this.artist = artist;
   this.playCount = playCount;
+  this.mbId = mbId;
 };
 
 var LastFmApiClient = function() {
@@ -144,15 +145,37 @@ LastFmApiClient.prototype.getWeeklyAlbumChart = function(user, from, to) {
       var name = itr.name;
       var artist = itr.artist['#text']
       var playCount = parseInt(itr.playcount);
-      var album = new Album(name, artist, playCount);
+      var mbid = itr.mbid;
+      var album = new Album(name, artist, playCount, mbid);
       albums.push(album);
     }
 
     deferred.resolve(albums);
   });
 
-  return deferred.promise;};
+  return deferred.promise;
+};
 
+LastFmApiClient.prototype.getAlbumInfo = function(artist, album) {
+  var deferred = Q.defer();
+  var endpoint = this.BASE_URL;
+  endpoint += "/2.0/?method=album.getinfo";
+  endpoint += "&format=" + this.FORMAT;
+  endpoint += "&api_key=" + this.API_KEY;
+  endpoint += "&artist=" + artist;
+  endpoint += "&album=" + album;
+
+
+  $.get(endpoint, function(data) {
+    var json = JSON.stringify(data);
+    var parsed = JSON.parse(json);
+    console.log(parsed);
+
+    deferred.resolve();
+  });
+
+  return deferred.promise; 
+};
 /*
 var client = new LastFmApiClient();
 client.getWeeklyChartList("gomezfx").then(function (dates) {
