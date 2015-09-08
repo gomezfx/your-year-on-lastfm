@@ -1,0 +1,135 @@
+doctype html
+html
+  head
+    title Aldo Gomez
+    meta(charset="utf-8")
+    meta(name="viewport", content="width=device-width", initial-scale="1")
+    link(rel="stylesheet" href="http://cdn.foundation5.zurb.com/foundation.css")
+    link(rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css")
+    link(rel="stylesheet" href="assets/css/styles.css")
+  body
+    .max-height(id="main")
+      .background--start
+        .row.splash.max-height
+          .columns.small-12.text-center.center-vertical
+            br
+            input.splash__field(placeholder="Enter your username.", v-model="username")
+            .my-button--center(v-on="click : initialize")
+              .my-button__content Go
+      .background--introduction(v-show="initialized")
+        .row.max-height
+          .columns.small-12.text-center.center-vertical
+            .introduction__avatar-wrapper
+              .introduction__hr--short--left
+              .introduction__avatar(style="background: url({{ avatarSource }}) no-repeat center; background-size: cover;")
+              .introduction__hr--short--right
+            .introduction__message
+              | You've scrobbled...
+              br.space
+              span.introduction__scrobble-count 2,503
+              br.space
+              | times in 2014.
+              br.space
+              | Keep scrolling to learn
+              br
+              | about your year on
+              br
+              | last.fm.
+            .introduction__hr--long
+      .background--albums(v-show="initialized")
+        .row.collapse.max-height
+          .columns.small-12.center-vertical
+            .row.collapse
+              .columns.small-12.medium-6
+                .albums__album-wrapper--red
+                  .albums__album-content
+                    .albums__album-text(v-class="active : albumsToggled")
+                      span.albums__album-number I.
+                      br.space
+                      .albums__hr
+                      br.space
+                      span.albums__album-name {{ album1.name }}
+                      br
+                      span.albums__album-artist by {{ album1.artist }}
+                    .albums__album-art(style="background: url({{ album1.image }}); background-size: cover;", v-class="active : albumsToggled")
+              .columns.small-12.medium-6
+                .row.collapse
+                  .columns.small-12.medium-6
+                    .albums__album-wrapper--blue
+                      .albums__album-content
+                        .albums__album-text(v-class="active : albumsToggled")
+                          span.albums__album-number II.
+                          br.space
+                          .albums__hr
+                          br.space
+                          span.albums__album-name {{ album2.name }}
+                          br
+                          span.albums__album-artist by {{ album2.artist }}
+                        .albums__album-art(style="background: url({{ album2.image }}) no-repeat center; background-size: cover;", v-class="active : albumsToggled")
+                  .columns.small-12.medium-6
+                    .albums__album-wrapper--blue
+                      .albums__album-content
+                        .albums__album-text(v-class="active : albumsToggled")
+                          span.albums__album-number III.
+                          br.space
+                          .albums__hr
+                          br.space
+                          span.albums__album-name {{ album3.name }}
+                          br
+                          span.albums__album-artist by {{ album3.artist }}
+                        .albums__album-art(style="background: url({{ album3.image }}) no-repeat center; background-size: cover;", v-class="active : albumsToggled")
+                .row.collapse
+                  .columns.small-12.medium-6
+                    .albums__album-wrapper--blue
+                      .albums__album-content
+                        .albums__album-text(v-class="active : albumsToggled")
+                          span.albums__album-number IV.
+                          br.space
+                          .albums__hr
+                          br.space
+                          span.albums__album-name {{ album4.name }}
+                          br
+                          span.albums__album-artist by {{ album4.artist }}
+                        .albums__album-art(style="background: url({{ album4.image }}) no-repeat center; background-size: cover;", v-class="active : albumsToggled")
+                  .columns.small-12.medium-6
+                    .albums__album-wrapper--blue
+                      .albums__album-content
+                        .albums__album-text(v-class="active : albumsToggled")
+                          span.albums__album-number V.
+                          br.space
+                          .albums__hr
+                          br.space
+                          span.albums__album-name {{ album5.name }}
+                          br
+                          span.albums__album-artist by {{ album5.artist }}
+                        .albums__album-art(style="background: url({{ album5.image }}) no-repeat center; background-size: cover;", v-class="active : albumsToggled")
+            .row.collapse
+              .columns.small-12
+                br.space
+                .my-button--circular--center(v-on="click : albumsToggled = !albumsToggled")
+                  .my-button__content--circular
+                    i.fa.fa-eye
+      .background--songs(v-show="initialized")
+        .row.collapse(v-repeat="song in songs" style="margin-bottom: 4rem;")
+          .columns.small-1.text-left
+            hr.hr--1
+            br.space
+            .songs__number {{ $index + 1 }}
+          .columns.small-10.text-center
+            hr.hr--1
+            br.space
+            .songs__title {{ song.name }}
+            .songs__artist by {{ song.artist }}
+          .columns.small-1.text-right
+            hr.hr--1
+            br.space
+            .songs__number {{ song.playCount }}
+            .songs__scrobbles scrobbles
+    script(src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js")
+    script(src="http://cdnjs.cloudflare.com/ajax/libs/ScrollMagic/2.0.5/ScrollMagic.min.js")
+    script(src="http://cdnjs.cloudflare.com/ajax/libs/ScrollMagic/2.0.5/plugins/debug.addIndicators.min.js")
+    script(src="https://cdnjs.cloudflare.com/ajax/libs/q.js/1.4.1/q.js")
+    script(src="http://cdnjs.cloudflare.com/ajax/libs/vue/0.12.12/vue.min.js")
+    script(src="assets/js/config.js")
+    script(src="assets/js/lastfm-api.js")
+    script(src="assets/js/app.js")

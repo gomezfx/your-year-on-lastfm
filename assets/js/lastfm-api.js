@@ -2,8 +2,9 @@ function log(message) {
   console.log(message);
 };
 
-function User(name, avatarSource) {
+function User(name, realName, avatarSource) {
   this.name = name;
+  this.realName = realName;
   this.avatarSource = avatarSource;
 };
 
@@ -25,6 +26,13 @@ function Album(name, artist, playCount, mbId) {
   this.mbId = mbId;
 };
 
+function AlbumInfo(artist, id, images, name) {
+  this.artist = artist;
+  this.id = id;
+  this.images = images;
+  this.name = name;
+}
+
 var LastFmApiClient = function() {
   this.API_KEY = Config.API_KEY;
   this.SECRET = Config.SECRET;
@@ -44,8 +52,9 @@ LastFmApiClient.prototype.getInfo = function(user) {
     var json = JSON.stringify(data);
     var parsed = JSON.parse(json);
     var name = parsed.user.name;
+    var realName = parsed.user.realname;
     var avatarSource = parsed.user.image[2]['#text'];
-    var user = new User(name, avatarSource);
+    var user = new User(name, realName, avatarSource);
 
     deferred.resolve(user);
   });
@@ -104,7 +113,7 @@ LastFmApiClient.prototype.getWeeklyTrackChart = function(user, from, to) {
     for (var i = 0; i < length; i++) {
       var itr = parsed.weeklytrackchart.track[i];
       var name = itr.name;
-      var artist = itr.artist;
+      var artist = itr.artist['#text'];
       var playCount = parseInt(itr.playcount);
       var track = new Track(name, artist, playCount);
       tracks.push(track);
@@ -168,12 +177,19 @@ LastFmApiClient.prototype.getAlbumInfo = function(artist, album) {
 
   $.get(endpoint, function(data) {
     var json = JSON.stringify(data);
-    var parsed = JSON.parse(json);
-    console.log(parsed);
+    var parsed = JSON.parse(json).album;
+    var artist = parsed.artist;
+    var id = parsed.id;
+    var images = new Array();
+    for (var i = 0; i < parsed.image.length; i++) {
+      images.push(parsed.image[i]['#text']);
+    }
+    var name = parsed.name;
+    var albumInfo = new AlbumInfo(artist, id, images, name);
 
-    deferred.resolve();
+    deferred.resolve(albumInfo);
   });
-
+  
   return deferred.promise; 
 };
 /*
