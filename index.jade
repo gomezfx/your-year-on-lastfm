@@ -39,70 +39,70 @@ html
       .background--albums(v-show="initialized")
         .row.collapse.max-height
           .columns.small-12.center-vertical
-            .row.collapse
+            .row.collapse.albums
               .columns.small-12.medium-6
-                .albums__album-wrapper--red
+                .albums__album-wrapper
                   .albums__album-content
                     .albums__album-text(v-class="active : albumsToggled")
-                      span.albums__album-number I.
+                      span.albums__album-number 01
                       br.space
                       .albums__hr
                       br.space
                       span.albums__album-name {{ album1.name }}
                       br
                       span.albums__album-artist by {{ album1.artist }}
-                    .albums__album-art(style="background: url({{ album1.image }}); background-size: cover;", v-class="active : albumsToggled")
+                    .albums__album-art(style="background-image: url({{ album1.image }}); background-size: cover;", v-class="active : albumsToggled")
               .columns.small-12.medium-6
                 .row.collapse
                   .columns.small-12.medium-6
-                    .albums__album-wrapper--blue
+                    .albums__album-wrapper
                       .albums__album-content
                         .albums__album-text(v-class="active : albumsToggled")
-                          span.albums__album-number II.
+                          span.albums__album-number 02
                           br.space
                           .albums__hr
                           br.space
                           span.albums__album-name {{ album2.name }}
                           br
                           span.albums__album-artist by {{ album2.artist }}
-                        .albums__album-art(style="background: url({{ album2.image }}) no-repeat center; background-size: cover;", v-class="active : albumsToggled")
+                        .albums__album-art(style="background-image: url({{ album2.image }}); background-size: cover;", v-class="active : albumsToggled")
                   .columns.small-12.medium-6
-                    .albums__album-wrapper--blue
+                    .albums__album-wrapper
                       .albums__album-content
                         .albums__album-text(v-class="active : albumsToggled")
-                          span.albums__album-number III.
+                          span.albums__album-number 03
                           br.space
                           .albums__hr
                           br.space
                           span.albums__album-name {{ album3.name }}
                           br
                           span.albums__album-artist by {{ album3.artist }}
-                        .albums__album-art(style="background: url({{ album3.image }}) no-repeat center; background-size: cover;", v-class="active : albumsToggled")
+                        .albums__album-art(style="background-image: url({{ album3.image }}); background-size: cover;", v-class="active : albumsToggled")
                 .row.collapse
                   .columns.small-12.medium-6
-                    .albums__album-wrapper--blue
+                    .albums__album-wrapper
                       .albums__album-content
                         .albums__album-text(v-class="active : albumsToggled")
-                          span.albums__album-number IV.
+                          span.albums__album-number 04
                           br.space
                           .albums__hr
                           br.space
                           span.albums__album-name {{ album4.name }}
                           br
                           span.albums__album-artist by {{ album4.artist }}
-                        .albums__album-art(style="background: url({{ album4.image }}) no-repeat center; background-size: cover;", v-class="active : albumsToggled")
+                        .albums__album-art(style="background-image: url({{ album4.image }}); background-size: cover;", v-class="active : albumsToggled")
                   .columns.small-12.medium-6
-                    .albums__album-wrapper--blue
+                    .albums__album-wrapper
                       .albums__album-content
                         .albums__album-text(v-class="active : albumsToggled")
-                          span.albums__album-number V.
+                          span.albums__album-number 05
                           br.space
                           .albums__hr
                           br.space
                           span.albums__album-name {{ album5.name }}
                           br
                           span.albums__album-artist by {{ album5.artist }}
-                        .albums__album-art(style="background: url({{ album5.image }}) no-repeat center; background-size: cover;", v-class="active : albumsToggled")
+                        .albums__album-art(style="background-image: url({{ album5.image }}); background-size: cover;", v-class="active : albumsToggled")
             .row.collapse
               .columns.small-12
                 br.space
@@ -110,7 +110,7 @@ html
                   .my-button__content--circular
                     i.fa.fa-eye
       .background--songs(v-show="initialized")
-        .row.collapse(v-repeat="song in songs" style="margin-bottom: 4rem;")
+        .row.collapse(v-repeat="song in songs" style="margin-bottom: 4rem; margin-top: 4rem;")
           .columns.small-1.text-left
             hr.hr--1
             br.space
@@ -123,7 +123,7 @@ html
           .columns.small-1.text-right
             hr.hr--1
             br.space
-            .songs__number {{ song.playCount }}
+            .songs__number {{ song.playCount | addCommas }}
             .songs__scrobbles scrobbles
     script(src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js")
     script(src="http://cdnjs.cloudflare.com/ajax/libs/ScrollMagic/2.0.5/ScrollMagic.min.js")

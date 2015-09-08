@@ -31,7 +31,7 @@ html, body {
 br.space {
   display: block; /* makes it have a width */
   content: ""; /* clears default height */
-  margin-top: 1.25rem; /* change this to whatever height you want it */
+  margin-top: 1rem; /* change this to whatever height you want it */
 }
 
 hr {
@@ -297,10 +297,16 @@ hr {
   line-height: 3.998rem;
 }
 
+.albums {
+  padding: 4em;
+  border: 1px solid black;
+}
+
 .albums__album-wrapper {
   width: 100%;
   padding-top: 100%;
   position: relative;
+  background-color: #000000;
 }
 
 .albums__album-content {
@@ -317,7 +323,9 @@ hr {
 }
 
 .albums__album-content:hover .albums__album-art {
-  opacity: .2;
+  opacity: 1;
+  background-color: #FF1744;
+  background-blend-mode: multiply;
 }
 
 .albums__album-text {
@@ -330,10 +338,10 @@ hr {
 }
 
 .albums__album-number {
-  font-size: 3.998rem;
+  font-size: 1rem;
+  line-height: 1rem;
   font-weight: 600;
-  color: white;
-  line-height: 3.998rem;
+  color: #FFFFFF;
 }
 
 .albums__album-name {
@@ -370,14 +378,17 @@ hr {
   z-index: 2;
   background-size: cover;
   background-position: 50% 50%;
-  opacity: 0;
-  transition: opacity .175s ease-in-out;
+  opacity: .15;
   height: 100%;
   width: 100%;
+  background-color: #000000;
+  background-blend-mode: luminosity;
 }
 
 .albums__album-art.active {
-  opacity: .2;
+  opacity: 1;
+  background-color: #FF1744;
+  background-blend-mode: multiply;
 }
 
 .albums__album-wrapper--red {
@@ -409,7 +420,7 @@ hr {
 .background--albums {
   height: 100%;
   width: 100%;
-  background: -webkit-linear-gradient(left, #3D5AFE, #FF1744);
+  background: #FFFFFF;
 }
 
 .background--songs {
@@ -503,7 +514,7 @@ hr {
 }
 
 .songs__artist {
-  font-size: 3.998rem;
+  font-size: 2.827rem;
   line-height: 3.998rem;
   font-weight: 300;
   color: #000000;
