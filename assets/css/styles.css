@@ -680,7 +680,7 @@ hr {
 }
 
 .slide-out-top {
-  transition: all 1s ease-in-out;
+  transition: all .525s ease-in-out;
   top: 0%;
   display: block;
 }
