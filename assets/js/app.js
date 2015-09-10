@@ -1,6 +1,99 @@
+var scrollMagicController = new ScrollMagic.Controller({
+  addIndicators: true
+});
+
 Vue.filter('addCommas', function (x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-})
+});
+
+Vue.filter('isEven', function (x) {
+  if (x % 2 == 0) {
+    return true;
+  } else {
+    return false;
+  }
+});
+
+Vue.directive('slide-in-right', function (value) {
+  this.el.classList.add("slide-in-right");
+
+  if (value) {
+    new ScrollMagic.Scene({
+      triggerElement: this.el,
+      reverse: false
+    })
+    .setClassToggle(this.el, "active")
+    .addTo(scrollMagicController);
+  }
+});
+
+Vue.directive('slide-in-left', function (value) {
+  this.el.classList.add("slide-in-left");
+
+  if (value) {
+    new ScrollMagic.Scene({
+      triggerElement: this.el,
+      reverse: false,
+    })
+    .setClassToggle(this.el, "active")
+    .addTo(scrollMagicController);
+  }
+});
+
+Vue.directive('slide-in-top', function (value) {
+  //this.el.classList.add("slide-in-top");
+  var elem = this.el;
+
+  if (value.bindOn) {
+    Vue.nextTick(function () {
+
+      new ScrollMagic.Scene({
+        triggerElement: elem,
+        triggerHook: value.triggerHook,
+        duration: $(window).height()
+      })
+      .setTween(TweenMax.fromTo(elem, 0.5, { scale: 0.9 }, { scale: 1, ease: Power1.easeOut }))
+      .addTo(scrollMagicController);
+
+      var timeline = new TimelineMax();
+
+      timeline
+        .fromTo(elem, 0.5, { opacity: 0.3 }, { opacity: 1, ease: Power1.easeOut })
+        .to(elem, 0.5, { opacity: 0.3, ease: Power1.easeIn });
+
+      new ScrollMagic.Scene({
+        triggerElement: elem,
+        triggerHook: value.triggerHook,
+        duration: $(window).height(),
+        offset: $(elem).outerHeight()/2
+      })
+      .setTween(timeline)
+      .addTo(scrollMagicController);
+    });
+  }
+});
+
+Vue.directive('expand-width', function(value) {
+  var elem = this.el;
+  var _value = value;
+  if(value.bindOn) {
+    Vue.nextTick(function () {
+      var timeline = new TimelineMax();
+      console.log(_value);
+      timeline
+        .fromTo(elem, 0.5, { width: 0 }, { width: _value.width + "px", ease: Power1.easeOut })
+        .to(elem, 0.5, { width: 0, ease: Power1.easeIn });
+
+      new ScrollMagic.Scene({
+        triggerElement: elem,
+        triggerHook: value.triggerHook,
+        duration: $(window).height()
+      })
+      .setTween(timeline)
+      .addTo(scrollMagicController);
+    });
+  }
+});
 
 var main = new Vue({
   el: '#main',
@@ -29,7 +122,8 @@ var main = new Vue({
       this.albums[i] = {
         name: "",
         artist: "",
-        image: ""
+        image: "",
+        playCount: ""
       }
     }
 
@@ -64,6 +158,10 @@ var main = new Vue({
       }).then(function (dates) {
         var results = [];
         var songResults = []
+
+        // Recent tracks
+
+        // End recent tracks
 
 
         // Songs
@@ -101,7 +199,6 @@ var main = new Vue({
           });
 
           for (var i = 0; i < 10; i++) {
-            console.log(songArray[i]);
             self.songs[i].name = songArray[i].name;
             self.songs[i].artist = songArray[i].artist;
             self.songs[i].playCount = songArray[i].playCount;
@@ -122,6 +219,7 @@ var main = new Vue({
         var albumMap = {};
         for (var i = 0; i < albums.length; i++) {
           var chart = albums[i];
+          //console.log(chart);
           for (var j = 0; j < chart.length; j++) {
             var albumItr = chart[j];
             if(albumMap.hasOwnProperty(albumItr.name)) {
@@ -144,6 +242,8 @@ var main = new Vue({
         for(var i = 0; i < 5; i++) {
           self.albums[i].name = albumArray[i].name;
           self.albums[i].artist = albumArray[i].artist;
+          self.albums[i].playCount = albumArray[i].playcount;
+          //console.log(albumArray[i].playCount);
           results.push(client.getAlbumInfo(albumArray[i].artist, albumArray[i].name));
         }      
         return Q.all(results);

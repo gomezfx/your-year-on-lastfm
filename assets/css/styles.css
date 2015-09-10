@@ -39,6 +39,7 @@ hr {
   height: 1px;
   color: #000000;
   background-color: #000000;
+  margin: 0 auto 0 auto;
 }
 
 .hr--1 {
@@ -346,14 +347,14 @@ hr {
 
 .albums__album-name {
   font-size: 1.414rem;
-  font-weight: 500;
+  font-weight: 600;
   color: white;
   line-height: 1.414rem;
 }
 
 .albums__album-artist {
   font-size: 1rem;
-  font-weight: 400;
+  font-weight: 300;
   color: white;
   line-height: 1rem;
 }
@@ -491,6 +492,11 @@ hr {
   left: -4px;
 }
 
+.songs__song {
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+}
+
 .songs__number {
   font-size: 1rem;
   line-height: 1rem;
@@ -504,7 +510,6 @@ hr {
   font-weight: 300;
   color: #000000;
 }
-
 
 .songs__title {
   font-size: 3.998rem;
@@ -520,4 +525,46 @@ hr {
   color: #000000;
 }
 
+.slide-in-right {
+  transition: all .175s ease-in-out;
+  opacity: 0;
+  transform: scale(1) translateX(-4rem);
+}
 
+.slide-in-left {
+  transition: all .175s ease-in-out;
+  opacity: 0;
+  transform: scale(1) translateX(4rem);
+}
+
+.slide-in-right.active {
+  opacity: 1;
+  transform: scale(1) translateX(0);
+}
+
+.slide-in-left.active {
+  opacity: 1;
+  transform: scale(1) translateX(0);
+}
+
+.slide-in-top {
+  transition: all .175s ease-in-out;
+  opacity: 0;
+  transform: scale(1) translateY(4rem);
+}
+
+.slide-in-top.active {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+}
+
+.transition {
+  min-height: 50%;
+}
+
+.transition__title {
+  font-family: 'Libre Baskerville', serif;
+  font-size: 5.6532rem;
+  line-height: 5.6532rem;
+  color: black;
+}

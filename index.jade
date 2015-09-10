@@ -6,6 +6,7 @@ html
     meta(name="viewport", content="width=device-width", initial-scale="1")
     link(rel="stylesheet" href="http://cdn.foundation5.zurb.com/foundation.css")
     link(rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css")
+    link(rel='stylesheet' href='https://fonts.googleapis.com/css?family=Libre+Baskerville' type='text/css')
     link(rel="stylesheet" href="assets/css/styles.css")
   body
     .max-height(id="main")
@@ -36,9 +37,13 @@ html
               br
               | last.fm.
             .introduction__hr--long
+      .row.collapse.max-height(v-show="initialized")
+        .columns.small-12.text-center.center-vertical
+          .transition__title Top 5 Albums
+          hr(v-expand-width="{ bindOn: initialized, triggerHook: 1, width: 250 }")
       .background--albums(v-show="initialized")
         .row.collapse.max-height
-          .columns.small-12.center-vertical
+          .columns.small-12.center-vertical(v-slide-in-top="{ bindOn: initialized, triggerHook: 1 }")
             .row.collapse.albums
               .columns.small-12.medium-6
                 .albums__album-wrapper
@@ -109,26 +114,34 @@ html
                 .my-button--circular--center(v-on="click : albumsToggled = !albumsToggled")
                   .my-button__content--circular
                     i.fa.fa-eye
+      .row.collapse.max-height(v-show="initialized")
+        .columns.small-12.text-center.center-vertical
+          .transition__title Top 10 Songs
+          hr(v-expand-width="{ bindOn: initialized, triggerHook: 1, width: 250 }")
       .background--songs(v-show="initialized")
-        .row.collapse(v-repeat="song in songs" style="margin-bottom: 4rem; margin-top: 4rem;")
-          .columns.small-1.text-left
-            hr.hr--1
-            br.space
-            .songs__number {{ $index + 1 }}
-          .columns.small-10.text-center
-            hr.hr--1
-            br.space
-            .songs__title {{ song.name }}
-            .songs__artist by {{ song.artist }}
-          .columns.small-1.text-right
-            hr.hr--1
-            br.space
-            .songs__number {{ song.playCount | addCommas }}
-            .songs__scrobbles scrobbles
+        .row.collapse(v-repeat="song in songs")
+          .columns.small-12.songs__song(v-slide-in-top="{ bindOn: initialized, triggerHook: 1 }")
+            .row.collapse
+              .columns.small-1.text-left
+                hr.hr--1
+                br.space
+                .songs__number {{ $index + 1 }}
+              .columns.small-10.text-center
+                hr.hr--1
+                br.space
+                .songs__title {{ song.name }}
+                .songs__artist by {{ song.artist }}
+              .columns.small-1.text-right
+                hr.hr--1
+                br.space
+                .songs__number {{ song.playCount | addCommas }}
+                .songs__scrobbles scrobbles
     script(src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js")
+    script(src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.18.0/TweenMax.min.js")
     script(src="http://cdnjs.cloudflare.com/ajax/libs/ScrollMagic/2.0.5/ScrollMagic.min.js")
     script(src="http://cdnjs.cloudflare.com/ajax/libs/ScrollMagic/2.0.5/plugins/debug.addIndicators.min.js")
-    script(src="https://cdnjs.cloudflare.com/ajax/libs/q.js/1.4.1/q.js")
+    script(src="https://cdnjs.cloudflare.com/ajax/libs/ScrollMagic/2.0.5/plugins/animation.gsap.min.js")
+    script(src="https://cdnjs.cloudflare.com/ajax/libs/q.js/1.4.1/q.min.js")
     script(src="http://cdnjs.cloudflare.com/ajax/libs/vue/0.12.12/vue.min.js")
     script(src="assets/js/config.js")
     script(src="assets/js/lastfm-api.js")

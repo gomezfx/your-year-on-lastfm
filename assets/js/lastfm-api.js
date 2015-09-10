@@ -116,6 +116,7 @@ LastFmApiClient.prototype.getWeeklyTrackChart = function(user, from, to) {
       var artist = itr.artist['#text'];
       var playCount = parseInt(itr.playcount);
       var track = new Track(name, artist, playCount);
+      //console.log(name + " | " + playCount);
       tracks.push(track);
     }
 
@@ -137,6 +138,7 @@ LastFmApiClient.prototype.getWeeklyAlbumChart = function(user, from, to) {
 
   $.get(endpoint, function(data) {
     var json = JSON.stringify(data);
+    //console.log(from + " | " + to);
     var parsed = JSON.parse(json);
     var albums = [];
     var length;
@@ -157,6 +159,35 @@ LastFmApiClient.prototype.getWeeklyAlbumChart = function(user, from, to) {
       var mbid = itr.mbid;
       var album = new Album(name, artist, playCount, mbid);
       albums.push(album);
+    }
+
+    deferred.resolve(albums);
+  });
+
+  return deferred.promise;
+};
+
+LastFmApiClient.prototype.getRecentTracks = function(user, page, from, to) {
+  var deferred = Q.defer();
+  var endpoint = this.BASE_URL;
+  endpoint += "/2.0/?method=user.getrecenttracks";
+  endpoint += "&format=" + this.FORMAT;
+  endpoint += "&api_key=" + this.API_KEY;
+  endpoint += "&user=" + user;
+  endpoint += "&page=" + page;
+  endpoint += "&to=" + to;
+  endpoint += "&from=" + from;
+
+  $.get(endpoint, function(data) {
+    var json = JSON.stringify(data);
+    var parsed = JSON.parse(json);
+    console.log(parsed);
+    var albums = [];
+    var length = parsed.recenttracks.track.length;
+  
+
+    for (var i = 0; i < length; i++) {
+      console.log(parsed.recenttracks.track[i].name + " | " + parsed.recenttracks.track[i].date['#text']);
     }
 
     deferred.resolve(albums);
