@@ -81,8 +81,7 @@ Vue.directive('expand-width', function(value) {
       var timeline = new TimelineMax();
       console.log(_value);
       timeline
-        .fromTo(elem, 0.5, { width: 0 }, { width: _value.width + "px", ease: Power1.easeOut })
-        .to(elem, 0.5, { width: 0, ease: Power1.easeIn });
+        .fromTo(elem, 0.5, { width: 0 }, { width: _value.width + "px", ease: Power1.easeOut });
 
       new ScrollMagic.Scene({
         triggerElement: elem,
@@ -100,6 +99,7 @@ var main = new Vue({
 
   data: {
     initialized: false,
+    loading: false,
     username: '',
     name: '',
     avatarSource: '',
@@ -120,7 +120,7 @@ var main = new Vue({
   created: function() {
     for (var i = 0; i < 5; i++) {
       this.albums[i] = {
-        name: "",
+        album: "",
         artist: "",
         image: "",
         playCount: ""
@@ -145,6 +145,8 @@ var main = new Vue({
       var client = new LastFmApiClient();
       var self = this;
 
+      self.loading = true;
+
       client.getInfo(self.username).then(function(user) {
         self.username = user.name;
         self.name = user.realName;
@@ -157,110 +159,132 @@ var main = new Vue({
         return client.getWeeklyChartList('gomezfx');
       }).then(function (dates) {
         var results = [];
-        var songResults = []
+        var songResults = [];
 
         // Recent tracks
-
-        // End recent tracks
-
-
-        // Songs
+        var trackResults = [];
 
         for (var i = 0; i < dates.length; i++) (function(i) {
           var current = dates[i];
           if (current.from >= YEAR_START && current.to <= YEAR_END) {
-            songResults.push(client.getWeeklyTrackChart(self.username, current.from, current.to));
+            trackResults.push(client.getRecentTracks(self.username, 1, 200, current.from, current.to));
           }
         })(i);
 
-        Q.all(songResults).then(function(songs) {
-          var songMap = {};
-          for (var i = 0; i < songs.length; i++) {
-            var chart = songs[i];
-            for (var j = 0; j < chart.length; j++) {
-              var songItr = chart[j];
-              var key = (songItr.name + songItr.artist).hashCode();
-              if (songMap.hasOwnProperty(key)) {
-                songMap[key].playCount += songItr.playCount;
-              } else {
-                songMap[key] = songItr;
+
+        Q.all(trackResults).then(function(pages) {
+          var allTrackResults = [];
+
+          for (var i = 0; i < pages.length; i++) {
+            var itr = pages[i];
+            var totalPages = itr.totalPages;
+            var from = itr.from;
+            var to = itr.to;
+
+            for (var j = 1; j <= totalPages; j++) {
+              allTrackResults.push(client.getRecentTracks(self.username, j, 200, from, to));
+            }
+          }
+
+          Q.all(allTrackResults).then(function(pages) {
+            var tracks = new Array();
+
+            for (var i = 0; i < pages.length; i++) {
+              var parsedTracks = pages[i].tracks;
+              
+              for (var j = 0; j < parsedTracks.length; j++) {
+                var track = {};
+                var parsedTrack = parsedTracks[j];
+
+                track.name = parsedTrack.name;
+                track.artist = parsedTrack.artist;
+                track.album = parsedTrack.album;
+
+                tracks.push(track);
               }
             }
-          }
 
-          var songArray = new Array();
-          for (var key in songMap) {
-            var obj = songMap[key];
-            songArray.push(obj);
-          }
+            var songMap = {};
+            var albumMap = {};
 
-          songArray.sort(function (a, b) {
-            return b.playCount - a.playCount;
-          });
+            for (var i = 0; i < tracks.length; i++) {
+              var trackItr = tracks[i];
+              var songKey = (trackItr.name + trackItr.artist).hashCode();
+              var albumKey = (trackItr.album + trackItr.artist).hashCode();
 
-          for (var i = 0; i < 10; i++) {
-            self.songs[i].name = songArray[i].name;
-            self.songs[i].artist = songArray[i].artist;
-            self.songs[i].playCount = songArray[i].playCount;
-          }
-        });
+              if (songMap.hasOwnProperty(songKey)) {
+                songMap[songKey].playCount++;
+              } else {
+                songMap[songKey] = trackItr;
+                songMap[songKey].playCount = 1;
+              }
 
-        // End songs
-
-        for (var i = 0; i < dates.length; i++) (function(i) {
-          var current = dates[i];
-          if (current.from >= YEAR_START && current.to <= YEAR_END) {
-            results.push(client.getWeeklyAlbumChart(self.username, current.from, current.to));
-          }
-        })(i);
-        
-        return Q.all(results);
-      }).then(function (albums) {
-        var albumMap = {};
-        for (var i = 0; i < albums.length; i++) {
-          var chart = albums[i];
-          //console.log(chart);
-          for (var j = 0; j < chart.length; j++) {
-            var albumItr = chart[j];
-            if(albumMap.hasOwnProperty(albumItr.name)) {
-              albumMap[albumItr.name].playCount += albumItr.playCount;
-            } else {
-              albumMap[albumItr.name] = albumItr;
+              if (albumMap.hasOwnProperty(albumKey)) {
+                albumMap[albumKey].playCount++;
+              } else {
+                albumMap[albumKey] = {};
+                albumMap[albumKey].album = trackItr.album;
+                albumMap[albumKey].artist = trackItr.artist;
+                albumMap[albumKey].playCount = 1;
+              }
             }
-          }
-        }
-        var albumArray = new Array();
-        for (var key in albumMap) {
-         var obj = albumMap[key];
-         albumArray.push(obj);
-        }
-        albumArray.sort(function (a, b) {
-          return b.playCount - a.playCount;
+
+            var songArray = new Array();
+
+            for (var key in songMap) {
+              var obj = songMap[key];
+              songArray.push(obj);
+            }
+
+            songArray.sort(function (a, b) {
+              return b.playCount - a.playCount;
+            });
+
+            for (var i = 0; i < 10; i++) {
+              self.songs[i].name = songArray[i].name;
+              self.songs[i].artist = songArray[i].artist;
+              self.songs[i].playCount = songArray[i].playCount;
+            }
+
+            var albumArray = new Array();
+
+            for (var key in albumMap) {
+              var obj = albumMap[key];
+              albumArray.push(obj);
+            }
+
+            albumArray.sort(function (a, b) {
+              return b.playCount - a.playCount;
+            });
+
+            var results = [];
+            
+            for(var i = 0; i < 5; i++) {
+              self.albums[i].album = albumArray[i].album;
+              self.albums[i].artist = albumArray[i].artist;
+              self.albums[i].playCount = albumArray[i].playcount;
+
+              results.push(client.getAlbumInfo(albumArray[i].artist, albumArray[i].album));
+            }
+
+            Q.all(results).then(function (data) {
+              for (var i = 0; i < data.length; i++) {
+                // 4 is mega size
+                var image = data[i].images[4];
+                self.albums[i].image = image;
+              }
+
+              self.album1 = self.albums[0];
+              self.album2 = self.albums[1];
+              self.album3 = self.albums[2];
+              self.album4 = self.albums[3];
+              self.album5 = self.albums[4];
+
+              self.initialized = true;
+              self.loading = false;
+            });
+          });
         });
-
-        var results = [];
-        for(var i = 0; i < 5; i++) {
-          self.albums[i].name = albumArray[i].name;
-          self.albums[i].artist = albumArray[i].artist;
-          self.albums[i].playCount = albumArray[i].playcount;
-          //console.log(albumArray[i].playCount);
-          results.push(client.getAlbumInfo(albumArray[i].artist, albumArray[i].name));
-        }      
-        return Q.all(results);
-      }).done(function (data) {
-        for (var i = 0; i < data.length; i++) {
-          // 4 is mega size
-          var image = data[i].images[4];
-          self.albums[i].image = image;
-        }
-
-        self.album1 = self.albums[0];
-        self.album2 = self.albums[1];
-        self.album3 = self.albums[2];
-        self.album4 = self.albums[3];
-        self.album5 = self.albums[4];
-
-        self.initialized = true;
       });
     },
 

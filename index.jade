@@ -10,13 +10,17 @@ html
     link(rel="stylesheet" href="assets/css/styles.css")
   body
     .max-height(id="main")
-      .background--start
+      .background--start.slide-out-top(v-class="active: initialized")
         .row.splash.max-height
           .columns.small-12.text-center.center-vertical
             br
             input.splash__field(placeholder="Enter your username.", v-model="username")
-            .my-button--center(v-on="click : initialize")
-              .my-button__content Go
+            .my-button--center(v-on="click : initialize" v-class="active : loading")
+              .my-button__content(v-class="active : loading")
+                div(v-show="!loading") Go
+                div(v-show="loading")
+                  svg.spinner(width="40px", height="40px", viewBox="0 0 40 40", xmlns="http://www.w3.org/2000/svg")
+                    circle.path(fill="none", stroke-width="2", stroke-linecap="round", cx="20", cy="20", r="15")
       .background--introduction(v-show="initialized")
         .row.max-height
           .columns.small-12.text-center.center-vertical
@@ -40,7 +44,7 @@ html
       .row.collapse.max-height(v-show="initialized")
         .columns.small-12.text-center.center-vertical
           .transition__title Top 5 Albums
-          hr(v-expand-width="{ bindOn: initialized, triggerHook: 1, width: 250 }")
+          hr.hr--2.center-horizontal(v-expand-width="{ bindOn: initialized, triggerHook: 1, width: 250 }")
       .background--albums(v-show="initialized")
         .row.collapse.max-height
           .columns.small-12.center-vertical(v-slide-in-top="{ bindOn: initialized, triggerHook: 1 }")
@@ -53,7 +57,7 @@ html
                       br.space
                       .albums__hr
                       br.space
-                      span.albums__album-name {{ album1.name }}
+                      span.albums__album-name {{ album1.album }}
                       br
                       span.albums__album-artist by {{ album1.artist }}
                     .albums__album-art(style="background-image: url({{ album1.image }}); background-size: cover;", v-class="active : albumsToggled")
@@ -67,7 +71,7 @@ html
                           br.space
                           .albums__hr
                           br.space
-                          span.albums__album-name {{ album2.name }}
+                          span.albums__album-name {{ album2.album }}
                           br
                           span.albums__album-artist by {{ album2.artist }}
                         .albums__album-art(style="background-image: url({{ album2.image }}); background-size: cover;", v-class="active : albumsToggled")
@@ -79,7 +83,7 @@ html
                           br.space
                           .albums__hr
                           br.space
-                          span.albums__album-name {{ album3.name }}
+                          span.albums__album-name {{ album3.album }}
                           br
                           span.albums__album-artist by {{ album3.artist }}
                         .albums__album-art(style="background-image: url({{ album3.image }}); background-size: cover;", v-class="active : albumsToggled")
@@ -92,7 +96,7 @@ html
                           br.space
                           .albums__hr
                           br.space
-                          span.albums__album-name {{ album4.name }}
+                          span.albums__album-name {{ album4.album }}
                           br
                           span.albums__album-artist by {{ album4.artist }}
                         .albums__album-art(style="background-image: url({{ album4.image }}); background-size: cover;", v-class="active : albumsToggled")
@@ -104,7 +108,7 @@ html
                           br.space
                           .albums__hr
                           br.space
-                          span.albums__album-name {{ album5.name }}
+                          span.albums__album-name {{ album5.album }}
                           br
                           span.albums__album-artist by {{ album5.artist }}
                         .albums__album-art(style="background-image: url({{ album5.image }}); background-size: cover;", v-class="active : albumsToggled")
@@ -117,7 +121,7 @@ html
       .row.collapse.max-height(v-show="initialized")
         .columns.small-12.text-center.center-vertical
           .transition__title Top 10 Songs
-          hr(v-expand-width="{ bindOn: initialized, triggerHook: 1, width: 250 }")
+          hr.hr--2.center-horizontal(v-expand-width="{ bindOn: initialized, triggerHook: 1, width: 250 }")
       .background--songs(v-show="initialized")
         .row.collapse(v-repeat="song in songs")
           .columns.small-12.songs__song(v-slide-in-top="{ bindOn: initialized, triggerHook: 1 }")
@@ -136,6 +140,10 @@ html
                 br.space
                 .songs__number {{ song.playCount | addCommas }}
                 .songs__scrobbles scrobbles
+      .row.collapse.max-height(v-show="initialized")
+        .columns.small-12.text-center.center-vertical
+          .transition__title Top 5 Artists
+            hr.hr--2.center-horizontal(v-expand-width="{ bindOn: initialized, triggerHook: 1, width: 250 }")
     script(src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js")
     script(src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.18.0/TweenMax.min.js")
     script(src="http://cdnjs.cloudflare.com/ajax/libs/ScrollMagic/2.0.5/ScrollMagic.min.js")

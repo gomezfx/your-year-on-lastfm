@@ -167,7 +167,7 @@ LastFmApiClient.prototype.getWeeklyAlbumChart = function(user, from, to) {
   return deferred.promise;
 };
 
-LastFmApiClient.prototype.getRecentTracks = function(user, page, from, to) {
+LastFmApiClient.prototype.getRecentTracks = function(user, page, limit, from, to) {
   var deferred = Q.defer();
   var endpoint = this.BASE_URL;
   endpoint += "/2.0/?method=user.getrecenttracks";
@@ -175,22 +175,41 @@ LastFmApiClient.prototype.getRecentTracks = function(user, page, from, to) {
   endpoint += "&api_key=" + this.API_KEY;
   endpoint += "&user=" + user;
   endpoint += "&page=" + page;
+  endpoint += "&limit=" + limit;
   endpoint += "&to=" + to;
   endpoint += "&from=" + from;
 
   $.get(endpoint, function(data) {
     var json = JSON.stringify(data);
     var parsed = JSON.parse(json);
-    console.log(parsed);
-    var albums = [];
-    var length = parsed.recenttracks.track.length;
-  
-
-    for (var i = 0; i < length; i++) {
-      console.log(parsed.recenttracks.track[i].name + " | " + parsed.recenttracks.track[i].date['#text']);
+    var tracks = [];
+    var length;
+    if (!parsed.hasOwnProperty('recenttracks')) {
+      length = 0;
+    }
+    else if (parsed.recenttracks.track === undefined) {
+      length = 0;
+    } else {
+      length = parsed.recenttracks.track.length;
     }
 
-    deferred.resolve(albums);
+    var page = {};
+    page.totalPages = parsed.recenttracks["@attr"].totalPages;
+    page.page = parsed.recenttracks["@attr"].page;
+    page.tracks = [];
+    page.from = from;
+    page.to = to;
+
+    for (var i = 0; i < length; i++) {
+      var itr = parsed.recenttracks.track[i];
+      page.tracks[i] = {};
+      page.tracks[i].artist = itr.artist["#text"];
+      page.tracks[i].name = itr.name;
+      page.tracks[i].album = itr.album["#text"];
+      //console.log(parsed.recenttracks.track[i].name + " | " + parsed.recenttracks.track[i].date['#text']);
+    }
+
+    deferred.resolve(page);
   });
 
   return deferred.promise;
