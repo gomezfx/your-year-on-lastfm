@@ -438,6 +438,13 @@ hr {
   background-color: #FFFFFF;
 }
 
+.background--artists {
+  height: 100%;
+  width: 100%;
+  background: #FFFFFF;
+}
+
+
 .background--albums {
   height: 100%;
   width: 100%;
@@ -445,7 +452,7 @@ hr {
 }
 
 .background--songs {
-  height: 100%;
+  min-height: 100%;
   width: 100%;
   background-color: #FFFFFF;
 }

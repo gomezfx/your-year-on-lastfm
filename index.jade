@@ -1,7 +1,7 @@
 doctype html
 html
   head
-    title Aldo Gomez
+    title Your Year on Last.FM
     meta(charset="utf-8")
     meta(name="viewport", content="width=device-width", initial-scale="1")
     link(rel="stylesheet" href="http://cdn.foundation5.zurb.com/foundation.css")
@@ -144,6 +144,9 @@ html
         .columns.small-12.text-center.center-vertical
           .transition__title Top 5 Artists
             hr.hr--2.center-horizontal(v-expand-width="{ bindOn: initialized, triggerHook: 1, width: 250 }")
+      .background--artists(v-show="initialized")
+        .row.collapse.max-height
+          .columns.small-2.text.center(v-repeat="artist in artists") {{ artist.artist }} - {{ artist.playCount }}
       .row.collapse.max-height(v-show="initialized")
         .columns.small-12.text-center.center-vertical
           .transition__title Seasonal Listens

@@ -118,6 +118,8 @@ var main = new Vue({
   },
 
   created: function() {
+    // Albums
+
     for (var i = 0; i < 5; i++) {
       this.albums[i] = {
         album: "",
@@ -127,13 +129,25 @@ var main = new Vue({
       }
     }
 
+    // Songs
+
     for (var i = 0; i < 10; i++) {
       this.songs[i] = {
         name: "",
         artist: "",
-        playCount: "",
+        playCount: ""
       }
     }
+
+    // Artists
+
+    for (var i = 0; i < 5; i++) {
+      this.artists[i] = {
+        artist: "",
+        playCount: ""
+      }
+    }
+
     var self = this;
     //this.initialize();
   },
@@ -206,11 +220,13 @@ var main = new Vue({
 
             var songMap = {};
             var albumMap = {};
+            var artistMap = {};
 
             for (var i = 0; i < tracks.length; i++) {
               var trackItr = tracks[i];
               var songKey = (trackItr.name + trackItr.artist).hashCode();
               var albumKey = (trackItr.album + trackItr.artist).hashCode();
+              var artistKey = (trackItr.artist).hashCode();
 
               if (songMap.hasOwnProperty(songKey)) {
                 songMap[songKey].playCount++;
@@ -227,7 +243,17 @@ var main = new Vue({
                 albumMap[albumKey].artist = trackItr.artist;
                 albumMap[albumKey].playCount = 1;
               }
+
+              if (artistMap.hasOwnProperty(artistKey)) {
+                artistMap[artistKey].playCount++;
+              } else {
+                artistMap[artistKey] = {};
+                artistMap[artistKey].artist = trackItr.artist;
+                artistMap[artistKey].playCount = 1;
+              }
             }
+
+            // Songs
 
             var songArray = new Array();
 
@@ -245,6 +271,8 @@ var main = new Vue({
               self.songs[i].artist = songArray[i].artist;
               self.songs[i].playCount = songArray[i].playCount;
             }
+
+            // Albums
 
             var albumArray = new Array();
 
@@ -283,6 +311,25 @@ var main = new Vue({
               self.initialized = true;
               self.loading = false;
             });
+
+            // Artists
+
+            var artistArray = new Array();
+
+            for (var key in artistMap) {
+              var obj = artistMap[key];
+              artistArray.push(obj);
+            }
+
+            artistArray.sort(function (a, b) {
+              return b.playCount - a.playCount;
+            });
+            
+            for(var i = 0; i < 5; i++) {
+              self.artists[i].artist = artistArray[i].artist;
+              self.artists[i].playCount = artistArray[i].playCount;
+            }
+
           });
         });
       });
