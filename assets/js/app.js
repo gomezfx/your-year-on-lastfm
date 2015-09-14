@@ -126,7 +126,8 @@ var main = new Vue({
     album4: '',
     album5: '',
     albumsToggled: false,
-    songs: []
+    songs: [],
+    totalScrobbles: 0
   },
 
   created: function() {
@@ -147,8 +148,7 @@ var main = new Vue({
       this.songs[i] = {
         name: "",
         artist: "",
-        playCount: ""
-      }
+        playCount: ""      }
     }
 
     // Artists
@@ -156,7 +156,8 @@ var main = new Vue({
     for (var i = 0; i < 5; i++) {
       this.artists[i] = {
         artist: "",
-        playCount: ""
+        playCount: "",
+        image: ""
       }
     }
 
@@ -265,6 +266,8 @@ var main = new Vue({
               }
             }
 
+            self.totalScrobbles = tracks.length;
+
             // Songs
 
             var songArray = new Array();
@@ -319,9 +322,6 @@ var main = new Vue({
               self.album3 = self.albums[2];
               self.album4 = self.albums[3];
               self.album5 = self.albums[4];
-
-              self.initialized = true;
-              self.loading = false;
             });
 
             // Artists
@@ -337,10 +337,24 @@ var main = new Vue({
               return b.playCount - a.playCount;
             });
             
+            var results = [];
+
             for(var i = 0; i < 5; i++) {
               self.artists[i].artist = artistArray[i].artist;
               self.artists[i].playCount = artistArray[i].playCount;
+
+              results.push(client.getArtistInfo(artistArray[i].artist));
             }
+
+            Q.all(results).then(function (data) {
+              for (var i = 0; i < data.length; i++) {
+                var image = data[i].images[4];
+                self.artists[i].image = image;
+              }
+
+              self.initialized = true;
+              self.loading = false;
+            });
 
           });
         });

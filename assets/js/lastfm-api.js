@@ -33,6 +33,11 @@ function AlbumInfo(artist, id, images, name) {
   this.name = name;
 }
 
+function ArtistInfo(name, images) {
+  this.name = name;
+  this.images = images;
+}
+
 var LastFmApiClient = function() {
   this.API_KEY = Config.API_KEY;
   this.SECRET = Config.SECRET;
@@ -238,6 +243,32 @@ LastFmApiClient.prototype.getAlbumInfo = function(artist, album) {
     var albumInfo = new AlbumInfo(artist, id, images, name);
 
     deferred.resolve(albumInfo);
+  });
+  
+  return deferred.promise; 
+};
+
+LastFmApiClient.prototype.getArtistInfo = function(artist) {
+  var deferred = Q.defer();
+  var endpoint = this.BASE_URL;
+  endpoint += "/2.0/?method=artist.getinfo";
+  endpoint += "&format=" + this.FORMAT;
+  endpoint += "&api_key=" + this.API_KEY;
+  endpoint += "&artist=" + artist;
+
+  $.get(endpoint, function(data) {
+    var json = JSON.stringify(data);
+    var parsed = JSON.parse(json);
+    var artist = parsed.artist;
+
+    var images = new Array();
+    for (var i = 0; i < artist.image.length; i++) {
+      images.push(artist.image[i]['#text']);
+    }
+    var name = parsed.name;
+    var artistInfo = new ArtistInfo(artist, images);
+
+    deferred.resolve(artistInfo);
   });
   
   return deferred.promise; 

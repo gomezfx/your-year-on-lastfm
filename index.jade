@@ -31,7 +31,7 @@ html
             .introduction__message
               | You've scrobbled...
               br.space
-              span.introduction__scrobble-count 2,503
+              span.introduction__scrobble-count {{ totalScrobbles | addCommas }}
               br.space
               | times in 2014.
               br.space
@@ -146,7 +146,12 @@ html
             hr.hr--2.center-horizontal(v-expand-width="{ bindOn: initialized, triggerHook: 1, width: 250 }")
       .background--artists(v-show="initialized")
         .row.collapse.max-height
-          .columns.small-2.text-center(v-repeat="artist in artists", v-first='{ index: $index, start: 0, class: "small-offset-1" }', v-last='{ index: $index, last: artists.length - 1, class: "end" }') {{ artist.artist }} - {{ artist.playCount }}
+          .columns.small-12.center-vertical(v-slide-in-top="{ bindOn: initialized, triggerHook: 1 }")
+            .row.collapse.artists
+              .columns.small-2--20.text-center(v-repeat="artist in artists")
+                .artists__artist-wrapper
+                  .artists__artist-content
+                    .artists__artist-art(style="background-image: url({{ artist.image }}); background-size: cover;") {{ artist.artist }}
       .row.collapse.max-height(v-show="initialized")
         .columns.small-12.text-center.center-vertical
           .transition__title Seasonal Listens
