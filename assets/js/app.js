@@ -14,6 +14,18 @@ Vue.filter('isEven', function (x) {
   }
 });
 
+Vue.directive('first', function (value) {
+  if (value.start === value.index) {
+    this.el.classList.add(value.class);
+  }
+});
+
+Vue.directive('last', function (value) {
+  if (value.last === value.index) {
+    this.el.classList.add(value.class);
+  }
+});
+
 Vue.directive('slide-in-right', function (value) {
   this.el.classList.add("slide-in-right");
 
