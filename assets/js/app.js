@@ -14,6 +14,22 @@ Vue.filter('isEven', function (x) {
   }
 });
 
+Vue.directive('count-up', function(value) {
+  if (value.bindOn) {
+    var options = {
+      useEasing : true, 
+      useGrouping : true, 
+      separator : ',', 
+      decimal : '.', 
+      prefix : '', 
+      suffix : '' 
+    };
+
+    var count = new CountUp(this.el, value.start, value.end, 0, value.duration, options);
+    count.start();
+  }
+});
+
 Vue.directive('first', function (value) {
   if (value.start === value.index) {
     this.el.classList.add(value.class);
@@ -118,6 +134,7 @@ var main = new Vue({
     albums: [],
     tracks: [],
     artists: [],
+    artistsToggled: false,
     links: [],
     zero: 0,
     album1: '',

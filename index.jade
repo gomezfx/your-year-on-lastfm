@@ -21,26 +21,14 @@ html
                 div(v-show="loading")
                   svg.spinner(width="40px", height="40px", viewBox="0 0 40 40", xmlns="http://www.w3.org/2000/svg")
                     circle.path(fill="none", stroke-width="2", stroke-linecap="round", cx="20", cy="20", r="15")
-      .background--introduction(v-show="initialized")
+      .background--introduction(v-show="initialized", style="background-image: url({{ avatarSource }})")
         .row.max-height
-          .columns.small-12.text-center.center-vertical
-            .introduction__avatar-wrapper
-              .introduction__hr--short--left
-              .introduction__avatar(style="background: url({{ avatarSource }}) no-repeat center; background-size: cover;")
-              .introduction__hr--short--right
-            .introduction__message
-              | You've scrobbled...
-              br.space
-              span.introduction__scrobble-count {{ totalScrobbles | addCommas }}
-              br.space
-              | times in 2014.
-              br.space
-              | Keep scrolling to learn
-              br
-              | about your year on
-              br
-              | last.fm.
-            .introduction__hr--long
+          .columns.small-12.medium-6.medium-offset-3.text-center.center-vertical
+            .introduction__text(v-class="fade-in : initialized") You've scrobbled...
+            hr.introduction__hr(v-class="fade-in : initialized")
+            .introduction__scrobble-count(v-count-up="{ bindOn: initialized, start: 0, end: totalScrobbles, duration: 5 }") 0
+            hr.introduction__hr(v-class="fade-in : initialized")
+            .introduction__text(v-class="fade-in : initialized") times in 2014.
       .row.collapse.max-height(v-show="initialized")
         .columns.small-12.text-center.center-vertical
           .transition__title Top 5 Albums
@@ -151,7 +139,13 @@ html
               .columns.small-2--20.text-center(v-repeat="artist in artists")
                 .artists__artist-wrapper
                   .artists__artist-content
-                    .artists__artist-art(style="background-image: url({{ artist.image }}); background-size: cover;") {{ artist.artist }}
+                    .artists__artist-art(style="background-image: url({{ artist.image }}); background-size: cover;", v-class="active : artistsToggled") {{ artist.artist }}
+            .row.collapse
+              .columns.small-12
+                br.space
+                .my-button--circular--center(v-on="click : artistsToggled = !artistsToggled")
+                  .my-button__content--circular
+                    i.fa.fa-eye
       .row.collapse.max-height(v-show="initialized")
         .columns.small-12.text-center.center-vertical
           .transition__title Seasonal Listens
@@ -163,6 +157,7 @@ html
     script(src="https://cdnjs.cloudflare.com/ajax/libs/ScrollMagic/2.0.5/plugins/animation.gsap.min.js")
     script(src="https://cdnjs.cloudflare.com/ajax/libs/q.js/1.4.1/q.min.js")
     script(src="http://cdnjs.cloudflare.com/ajax/libs/vue/0.12.12/vue.min.js")
+    script(src="assets/js/countUp.min.js")
     script(src="assets/js/config.js")
     script(src="assets/js/lastfm-api.js")
     script(src="assets/js/app.js")

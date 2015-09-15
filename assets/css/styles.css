@@ -290,6 +290,17 @@ hr {
   margin: 1.25rem auto 0 auto; 
 }
 
+.introduction__hr {
+  border: none;
+  height: 1px;
+  color: #FFFFFF;
+  background-color: #FFFFFF;
+  margin: 4rem 0 4rem 0;
+  padding: 0;
+  opacity: 0;
+  transition: all .175s ease-in-out 5s;
+}
+
 .introduction__name {
   font-size: 1.414rem;
   font-weight: 500;
@@ -302,18 +313,25 @@ hr {
   color: #304FFE;
 }
 
-.introduction__message {
-  font-size: 1.414rem;
-  font-weight: 500;
-  color: #000000;
-  line-height: 1.414rem;
+.introduction__text {
+  font-size: 1rem;
+  line-height: 1rem;
+  font-weight: 300;
+  color: #FFFFFF;
+  opacity: 0;
+  transition: all .175s ease-in-out 5s;
 }
 
 .introduction__scrobble-count {
-  font-size: 3.998rem ;
+  font-family: 'Circular';
   font-weight: 600;
-  color: #FF1744;
-  line-height: 3.998rem;
+  font-size: 5.6532rem;
+  line-height: 5.6532rem;
+  color: #FFFFFF;
+}
+
+.introduction__text.fade-in, .introduction__hr.fade-in {
+  opacity: 1;
 }
 
 .albums {
@@ -459,6 +477,11 @@ hr {
   background-blend-mode: luminosity;
 }
 
+.artists__artist-art.active {
+  opacity: 1;
+  background-color: #FF1744;
+  background-blend-mode: multiply;
+}
 
 .artists__artist-content:hover .artists__artist-text {
   padding: 1rem 1rem 1rem 1rem;
@@ -482,7 +505,10 @@ hr {
 .background--introduction {
   height: 100%;
   width: 100%;
-  background-color: #FFFFFF;
+  background-color: #FF1744;
+  background-blend-mode: multiply;
+  background-size: cover;
+  background-position: center;
 }
 
 .background--artists {
