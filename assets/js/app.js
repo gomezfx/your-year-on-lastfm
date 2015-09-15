@@ -111,10 +111,12 @@ Vue.directive('expand-width', function(value) {
       timeline
         .fromTo(elem, 0.5, { width: 0 }, { width: _value.width + "px", ease: Power1.easeOut });
 
+      console.log("Window: " + $(window).height());
+      console.log("Elem: " + $(elem).outerHeight());
       new ScrollMagic.Scene({
         triggerElement: elem,
         triggerHook: value.triggerHook,
-        duration: $(window).height()
+        duration: (($(window).height()/2) - ($(elem).outerHeight()/2))
       })
       .setTween(timeline)
       .addTo(scrollMagicController);

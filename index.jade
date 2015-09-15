@@ -21,6 +21,8 @@ html
                 div(v-show="loading")
                   svg.spinner(width="40px", height="40px", viewBox="0 0 40 40", xmlns="http://www.w3.org/2000/svg")
                     circle.path(fill="none", stroke-width="2", stroke-linecap="round", cx="20", cy="20", r="15")
+          .footer-start
+            i.fa.fa-info-circle
       .background--introduction(v-show="initialized", style="background-image: url({{ avatarSource }})")
         .row.max-height
           .columns.small-12.medium-6.medium-offset-3.text-center.center-vertical
@@ -150,6 +152,14 @@ html
         .columns.small-12.text-center.center-vertical
           .transition__title Seasonal Listens
             hr.hr--2.center-horizontal(v-expand-width="{ bindOn : initialized, triggerHook: 1, width: 250}")
+      .row.collapse.max-height.fin(v-show="initialized")
+        .columns.small-12.text-center.center-vertical
+          .transition__title Fin
+            hr.hr--2.center-horizontal(v-expand-width="{ bindOn : initialized, triggerHook: 1, width: 250}")
+        .footer-end
+          | Made by 
+          a(href="http://aldogomez.me") Aldo Gomez. 
+          | If you'd like to contribute or report some bugs, go here.
     script(src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js")
     script(src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.18.0/TweenMax.min.js")
     script(src="http://cdnjs.cloudflare.com/ajax/libs/ScrollMagic/2.0.5/ScrollMagic.min.js")

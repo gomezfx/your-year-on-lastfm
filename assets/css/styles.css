@@ -34,6 +34,16 @@ br.space {
   margin-top: 1rem; /* change this to whatever height you want it */
 }
 
+a {
+  color: #3D5AFE;
+  font-style: ;
+  transition: all .175s ease-in-out;
+}
+
+a:hover {
+  color: #F50057;
+}
+
 hr {
   border: none;
   height: px;
@@ -323,8 +333,8 @@ hr {
 }
 
 .introduction__scrobble-count {
-  font-family: 'Circular';
-  font-weight: 600;
+  font-family: 'Libre Baskerville', serif;
+  font-weight: 300;
   font-size: 5.6532rem;
   line-height: 5.6532rem;
   color: #FFFFFF;
@@ -664,6 +674,7 @@ hr {
 
 .transition__title {
   font-family: 'Libre Baskerville', serif;
+  font-weight: 300;
   font-size: 5.6532rem;
   line-height: 5.6532rem;
   color: black;
@@ -771,4 +782,34 @@ hr {
 
 .small-2--20 {
   width: 20%;
+}
+
+.footer-start {
+  position: absolute;
+  bottom: 1rem;
+  left: 0;
+  width: 100%;
+  color: #FFFFFF;
+  text-align: center;
+  font-family: "Circular";
+  font-weight: 300;
+  line-height: 1rem;
+  font-size: 1rem;
+}
+
+.footer-end {
+  position: absolute;
+  bottom: 1rem;
+  left: 0;
+  width: 100%;
+  color: black;
+  text-align: center;
+  font-family: "Circular";
+  font-weight: 300;
+  line-height: 1rem;
+  font-size: 1rem;
+}
+
+.fin {
+  position: relative;
 }
