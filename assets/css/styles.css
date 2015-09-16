@@ -54,6 +54,32 @@ hr {
   margin: 0 auto 0 auto;
 }
 
+.menu {
+  width: 100%;
+  height: 60px;
+  background-color: #ffffff;
+  opacity: 1;
+  position: fixed;
+  top: 0;
+  z-index: 10;
+}
+
+.menu-trigger {
+}
+
+.menu-avatar {
+  height: 50px;
+  width: 50px;
+  border-radius: 50px;
+  -webkit-border-radius: 50px;
+  -moz-border-radius: 50px;
+  background-color: transparent;
+  margin: 5px auto 0 auto;
+  background-size: cover;
+  background-position: center;
+  cursor: pointer;
+}
+
 .hr--1 {
   border: none;
   height: 1px;
@@ -532,6 +558,14 @@ hr {
   font-weight: 600;
   color: #FFFFFF;
   line-height: 1.414rem;
+}
+
+.artists__artist-name a {
+  color: #FFFFFF;
+}
+
+.artists__artist-name a:hover {
+  color: #000000;
 }
 
 .artists__artist-number {

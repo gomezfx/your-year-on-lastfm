@@ -232,7 +232,6 @@ LastFmApiClient.prototype.getAlbumInfo = function(artist, album) {
   $.get(endpoint, function(data) {
     var json = JSON.stringify(data);
     var parsed = JSON.parse(json).album;
-    console.log(parsed);
     var artist = parsed.artist;
     var id = parsed.id;
     var images = new Array();

@@ -114,6 +114,46 @@ Vue.directive('slide-in-top', function (value) {
   }
 });
 
+Vue.directive('fade-in-menu', function(value) {
+  var elem = this.el;
+
+  if (value.bindOn) {
+    Vue.nextTick(function() {
+      var timeline = new TimelineMax();
+
+      timeline
+        .fromTo(elem, .175, { backgroundColor: "transparent" }, { backgroundColor: "rgba(255,255,255,.75)", ease: Power1.easeOut })
+
+      new ScrollMagic.Scene({
+        triggerElement: $('.menu-trigger')[0],
+        triggerHook: 0,
+      })
+      .setTween(timeline)
+      .addTo(scrollMagicController);
+    });
+  }
+});
+
+Vue.directive('fade-in-menu-avatar', function(value) {
+  var elem = this.el;
+
+  if (value.bindOn) {
+    Vue.nextTick(function() {
+      var timeline = new TimelineMax();
+
+      timeline
+        .fromTo(elem, .175, { opacity: 0 }, { opacity: 1, ease: Power1.easeOut })
+
+      new ScrollMagic.Scene({
+        triggerElement: $('.menu-trigger')[0],
+        triggerHook: 0,
+      })
+      .setTween(timeline)
+      .addTo(scrollMagicController);
+    });
+  }
+});
+
 Vue.directive('fade-in', function(value) {
   var elem = this.el;
 
@@ -236,7 +276,8 @@ var main = new Vue({
       this.artists[i] = {
         artist: "",
         playCount: "",
-        image: ""
+        image: "",
+        artistUrl: ""
       }
     }
 
@@ -450,6 +491,7 @@ var main = new Vue({
               for (var i = 0; i < data.length; i++) {
                 var image = data[i].images[4];
                 self.artists[i].image = image;
+                self.artists[i].artistUrl = data[i].artistUrl;
               }
 
               self.initialized = true;
@@ -468,7 +510,7 @@ var main = new Vue({
         self.infoToggled = true;
         setTimeout(function() {
           self.infoToggled = false;
-        }, 5000);
+        }, 7000);
       }
     },
 

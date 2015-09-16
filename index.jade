@@ -1,7 +1,7 @@
 doctype html
 html
   head
-    title Your Year on Last.FM
+    title Your Year on Last.fm
     meta(charset="utf-8")
     meta(name="viewport", content="width=device-width", initial-scale="1")
     link(rel="stylesheet" href="http://cdn.foundation5.zurb.com/foundation.css")
@@ -10,6 +10,8 @@ html
     link(rel="stylesheet" href="assets/css/styles.css")
   body
     .max-height(id="main")
+      .menu(v-show="initialized", v-fade-in-menu='{ bindOn: initialized }')
+        .menu-avatar(style="background-image: url({{ avatarSource }})", v-fade-in-menu-avatar='{ bindOn: initialized }')
       .info-modal__wrapper
         .info-modal__content
       .background--start.slide-out-top(v-class="active: initialized")
@@ -25,9 +27,16 @@ html
                     circle.path(fill="none", stroke-width="2", stroke-linecap="round", cx="20", cy="20", r="15")
           .footer-start
             .footer-start__text(v-class="fade-in : infoToggled")
-              | Welcome to "Your Year on Last.fm".
+              | Welcome to 
+              span(style="font-weight: 600") Your Year on Last.fm
+              | .
               br
               | Enter your Last.fm username to see your scrobbling statistics for 2014.
+              br
+              br
+              | For demo purposes, use 
+              span(style="font-weight: 600") gomezfx 
+              | (yours truly).
             i.fa.fa-info-circle.footer-start__info(v-on="click : toggleInfo")
       .background--introduction(v-show="initialized", style="background-image: url({{ avatarSource }})")
         .row.max-height
@@ -37,7 +46,7 @@ html
             .introduction__scrobble-count(v-count-up="{ bindOn: initialized, start: 0, end: totalScrobbles, duration: 3 }") 0
             hr.introduction__hr(v-class="fade-in : initialized")
             .introduction__text(v-class="fade-in : initialized") times in 2014.
-      .row.collapse.max-height(v-show="initialized")
+      .row.collapse.max-height.menu-trigger(v-show="initialized")
         .columns.small-12.text-center.center-vertical
           .transition__title Top 5 Albums
           hr.hr--2.center-horizontal(v-expand-width="{ bindOn: initialized, triggerHook: 1, width: 250 }")
@@ -58,9 +67,9 @@ html
                         .albums__album-scrobbles-text scrobbles
                       .albums__hr
                       .albums__album-name
-                        a(href="{{ album1.albumUrl}}") {{ album1.album }}
+                        a(href="{{ album1.albumUrl}}" target="_blank") {{ album1.album }}
                       .albums__album-artist
-                        a(href="{{ album1.artistUrl }}") {{ album1.artist }}
+                        a(href="{{ album1.artistUrl }}" target="_blank") {{ album1.artist }}
                     .albums__album-art(style="background-image: url({{ album1.image }}); background-size: cover;", v-class="active : albumsToggled")
               .columns.small-12.medium-6
                 .row.collapse
@@ -77,9 +86,9 @@ html
                             .albums__album-scrobbles-text scrobbles
                           .albums__hr
                           .albums__album-name
-                            a(href="{{ album2.albumUrl }}") {{ album2.album }}
+                            a(href="{{ album2.albumUrl }}" target="_blank") {{ album2.album }}
                           .albums__album-artist
-                            a(href="{{ album2.artistUrl }}") {{ album2.artist }}
+                            a(href="{{ album2.artistUrl }}" target="_blank") {{ album2.artist }}
                         .albums__album-art(style="background-image: url({{ album2.image }}); background-size: cover;", v-class="active : albumsToggled")
                   .columns.small-12.medium-6
                     .albums__album-wrapper
@@ -94,9 +103,9 @@ html
                             .albums__album-scrobbles-text scrobbles
                           .albums__hr
                           .albums__album-name
-                            a(href="{{ album3.albumUrl }}") {{ album3.album }}
+                            a(href="{{ album3.albumUrl }}" target="_blank") {{ album3.album }}
                           .albums__album-artist
-                            a(href="{{ album3.artistUrl }}") {{ album3.artist }}
+                            a(href="{{ album3.artistUrl }}" target="_blank") {{ album3.artist }}
                         .albums__album-art(style="background-image: url({{ album3.image }}); background-size: cover;", v-class="active : albumsToggled")
                 .row.collapse
                   .columns.small-12.medium-6
@@ -112,9 +121,9 @@ html
                             .albums__album-scrobbles-text scrobbles
                           .albums__hr
                           .albums__album-name
-                           a(href="{{ album4.albumUrl }}") {{ album4.album }}
+                           a(href="{{ album4.albumUrl }}" target="_blank") {{ album4.album }}
                           .albums__album-artist
-                            a(href="{{ album4.artistUrl }}") {{ album4.artist }}
+                            a(href="{{ album4.artistUrl }}" target="_blank") {{ album4.artist }}
                         .albums__album-art(style="background-image: url({{ album4.image }}); background-size: cover;", v-class="active : albumsToggled")
                   .columns.small-12.medium-6
                     .albums__album-wrapper
@@ -129,9 +138,9 @@ html
                             .albums__album-scrobbles-text scrobbles
                           .albums__hr
                           .albums__album-name
-                            a(href="{{ album5.albumUrl }}") {{ album5.album }}
+                            a(href="{{ album5.albumUrl }}" target="_blank") {{ album5.album }}
                           .albums__album-artist
-                            a(href="{{ album5.artistUrl }}") {{ album5.artist }}
+                            a(href="{{ album5.artistUrl }}" target="_blank") {{ album5.artist }}
                         .albums__album-art(style="background-image: url({{ album5.image }}); background-size: cover;", v-class="active : albumsToggled")
             .row.collapse
               .columns.small-12
@@ -151,10 +160,10 @@ html
                 .songs__number {{ $index + 1 | padZeroes joajo}}
               .columns.small-10.text-center
                 .songs__title
-                  a(href="{{ song.songUrl }}")
+                  a(href="{{ song.songUrl }}" target="_blank")
                     | {{ song.name }}
                 .songs__artist
-                  a(href="{{ song.artistUrl }}") {{ song.artist }}
+                  a(href="{{ song.artistUrl }}" target="_blank") {{ song.artist }}
               .columns.small-1.text-right
                 .songs__number {{ song.playCount | addCommas }}
                 .songs__scrobbles scrobbles
@@ -178,7 +187,8 @@ html
                         .artists__scrobbles-count {{ artist.playCount | addCommas }}
                         .artists__scrobbles-text scrobbles
                       .artists__hr
-                      .artists__artist-name {{ artist.artist }}
+                      .artists__artist-name
+                        a(href="{{ artist.artistUrl }}" target="_blank") {{ artist.artist }}
                     .artists__artist-art(style="background-image: url({{ artist.image }}); background-size: cover;", v-class="active : artistsToggled")
             .row.collapse
               .columns.small-12
@@ -190,7 +200,7 @@ html
         .columns.small-12.text-center.center-vertical
           .transition__title Seasonal Listens
             hr.hr--2.center-horizontal(v-expand-width="{ bindOn : initialized, triggerHook: 1, width: 250}")
-      .background--seasons
+      .background--seasons(v-show="initialized")
         .row.collapse.max-height
           .columns.small-3.text-center
             | Spring
@@ -206,7 +216,7 @@ html
             hr.hr--2.center-horizontal(v-expand-width="{ bindOn : initialized, triggerHook: 1, width: 250}")
         .footer-end
           | Made by 
-          a(href="http://aldogomez.me") Aldo Gomez. 
+          a(href="http://aldogomez.me" target="_blank") Aldo Gomez. 
           | If you'd like to contribute or report some bugs, go here.
     script(src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js")
     script(src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.18.0/TweenMax.min.js")
