@@ -26,16 +26,18 @@ function Album(name, artist, playCount, mbId) {
   this.mbId = mbId;
 };
 
-function AlbumInfo(artist, id, images, name) {
+function AlbumInfo(artist, id, images, name, albumUrl) {
   this.artist = artist;
   this.id = id;
   this.images = images;
   this.name = name;
+  this.albumUrl = albumUrl;
 }
 
-function ArtistInfo(name, images) {
+function ArtistInfo(name, images, artistUrl) {
   this.name = name;
   this.images = images;
+  this.artistUrl = artistUrl;
 }
 
 var LastFmApiClient = function() {
@@ -121,7 +123,6 @@ LastFmApiClient.prototype.getWeeklyTrackChart = function(user, from, to) {
       var artist = itr.artist['#text'];
       var playCount = parseInt(itr.playcount);
       var track = new Track(name, artist, playCount);
-      //console.log(name + " | " + playCount);
       tracks.push(track);
     }
 
@@ -143,7 +144,6 @@ LastFmApiClient.prototype.getWeeklyAlbumChart = function(user, from, to) {
 
   $.get(endpoint, function(data) {
     var json = JSON.stringify(data);
-    //console.log(from + " | " + to);
     var parsed = JSON.parse(json);
     var albums = [];
     var length;
@@ -196,7 +196,7 @@ LastFmApiClient.prototype.getRecentTracks = function(user, page, limit, from, to
     } else {
       length = parsed.recenttracks.track.length;
     }
-    console.log(parsed);
+
     var page = {};
     page.totalPages = parsed.recenttracks["@attr"].totalPages;
     page.page = parsed.recenttracks["@attr"].page;
@@ -210,7 +210,7 @@ LastFmApiClient.prototype.getRecentTracks = function(user, page, limit, from, to
       page.tracks[i].artist = itr.artist["#text"];
       page.tracks[i].name = itr.name;
       page.tracks[i].album = itr.album["#text"];
-      page.tracks[i].url = itr.url;
+      page.tracks[i].songUrl = itr.url;
     }
 
     deferred.resolve(page);
@@ -232,14 +232,17 @@ LastFmApiClient.prototype.getAlbumInfo = function(artist, album) {
   $.get(endpoint, function(data) {
     var json = JSON.stringify(data);
     var parsed = JSON.parse(json).album;
+    console.log(parsed);
     var artist = parsed.artist;
     var id = parsed.id;
     var images = new Array();
+
     for (var i = 0; i < parsed.image.length; i++) {
       images.push(parsed.image[i]['#text']);
     }
     var name = parsed.name;
-    var albumInfo = new AlbumInfo(artist, id, images, name);
+    var albumUrl = parsed.url;
+    var albumInfo = new AlbumInfo(artist, id, images, name, albumUrl);
 
     deferred.resolve(albumInfo);
   });
@@ -264,8 +267,10 @@ LastFmApiClient.prototype.getArtistInfo = function(artist) {
     for (var i = 0; i < artist.image.length; i++) {
       images.push(artist.image[i]['#text']);
     }
+
     var name = parsed.name;
-    var artistInfo = new ArtistInfo(artist, images);
+    var artistUrl = artist.url;
+    var artistInfo = new ArtistInfo(artist, images, artistUrl);
 
     deferred.resolve(artistInfo);
   });

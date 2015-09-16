@@ -2,8 +2,20 @@ var scrollMagicController = new ScrollMagic.Controller({
   addIndicators: true
 });
 
+Vue.filter('padZeroes', function(x) {
+  if (x !== null && x !== undefined ) {
+    var s = x + "";
+    while (s.length < 2) {
+      s = "0" + s;
+    }
+    return s;
+  }
+});
+
 Vue.filter('addCommas', function (x) {
+  if (x !== null && x !== undefined ) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  }
 });
 
 Vue.filter('isEven', function (x) {
@@ -93,8 +105,8 @@ Vue.directive('slide-in-top', function (value) {
       new ScrollMagic.Scene({
         triggerElement: elem,
         triggerHook: value.triggerHook,
-        duration: $(window).height(),
-        offset: $(elem).outerHeight()/2
+        duration: $(window).height()/2,
+        offset: $(elem).height()/2
       })
       .setTween(timeline)
       .addTo(scrollMagicController);
@@ -171,6 +183,7 @@ var main = new Vue({
   data: {
     initialized: false,
     loading: false,
+    infoToggled: false,
     username: '',
     name: '',
     avatarSource: '',
@@ -187,7 +200,8 @@ var main = new Vue({
     album5: '',
     albumsToggled: false,
     songs: [],
-    totalScrobbles: 0
+    totalScrobbles: 0,
+    artistsToggled: false
   },
 
   created: function() {
@@ -198,7 +212,9 @@ var main = new Vue({
         album: "",
         artist: "",
         image: "",
-        playCount: ""
+        playCount: "",
+        albumUrl: "",
+        artistUrl: ""
       }
     }
 
@@ -209,7 +225,8 @@ var main = new Vue({
         name: "",
         artist: "",
         playCount: "",
-        url: ""
+        songUrl: "",
+        artistUrl: ""
       }
     }
 
@@ -288,7 +305,7 @@ var main = new Vue({
                 track.name = parsedTrack.name;
                 track.artist = parsedTrack.artist;
                 track.album = parsedTrack.album;
-                track.url = parsedTrack.url;
+                track.songUrl = parsedTrack.songUrl;
 
                 tracks.push(track);
               }
@@ -344,12 +361,22 @@ var main = new Vue({
               return b.playCount - a.playCount;
             });
 
+            var songResults = [];
+
             for (var i = 0; i < 10; i++) {
               self.songs[i].name = songArray[i].name;
               self.songs[i].artist = songArray[i].artist;
               self.songs[i].playCount = songArray[i].playCount;
-              self.songs[i].url = songArray[i].url;
+              self.songs[i].songUrl = songArray[i].songUrl;
+
+              songResults.push(client.getArtistInfo(songArray[i].artist));
             }
+
+            Q.all(songResults).then(function (data) {
+              for (var i = 0; i < 10; i++) {
+                self.songs[i].artistUrl = data[i].artistUrl;
+              }
+            });
 
             // Albums
 
@@ -364,21 +391,24 @@ var main = new Vue({
               return b.playCount - a.playCount;
             });
 
-            var results = [];
-            
+            var albumImageResults = [];
+            var albumArtistResults = [];
+
             for(var i = 0; i < 5; i++) {
               self.albums[i].album = albumArray[i].album;
               self.albums[i].artist = albumArray[i].artist;
-              self.albums[i].playCount = albumArray[i].playcount;
+              self.albums[i].playCount = albumArray[i].playCount;
 
-              results.push(client.getAlbumInfo(albumArray[i].artist, albumArray[i].album));
+              albumImageResults.push(client.getAlbumInfo(albumArray[i].artist, albumArray[i].album));
+              albumArtistResults.push(client.getArtistInfo(albumArray[i].artist));
             }
 
-            Q.all(results).then(function (data) {
+            Q.all(albumImageResults).then(function (data) {
               for (var i = 0; i < data.length; i++) {
                 // 4 is mega size
                 var image = data[i].images[4];
                 self.albums[i].image = image;
+                self.albums[i].albumUrl = data[i].albumUrl;
               }
 
               self.album1 = self.albums[0];
@@ -386,6 +416,12 @@ var main = new Vue({
               self.album3 = self.albums[2];
               self.album4 = self.albums[3];
               self.album5 = self.albums[4];
+            });
+
+            Q.all(albumArtistResults).then(function (data) {
+              for (var i = 0; i < data.length; i++) {
+                self.albums[i].artistUrl = data[i].artistUrl;
+              }
             });
 
             // Artists
@@ -401,16 +437,16 @@ var main = new Vue({
               return b.playCount - a.playCount;
             });
             
-            var results = [];
+            var artistResults = [];
 
             for(var i = 0; i < 5; i++) {
               self.artists[i].artist = artistArray[i].artist;
               self.artists[i].playCount = artistArray[i].playCount;
 
-              results.push(client.getArtistInfo(artistArray[i].artist));
+              artistResults.push(client.getArtistInfo(artistArray[i].artist));
             }
 
-            Q.all(results).then(function (data) {
+            Q.all(artistResults).then(function (data) {
               for (var i = 0; i < data.length; i++) {
                 var image = data[i].images[4];
                 self.artists[i].image = image;
@@ -423,6 +459,17 @@ var main = new Vue({
           });
         });
       });
+    },
+
+    toggleInfo: function() {
+      var self = this;
+
+      if (!self.infoToggled) {
+        self.infoToggled = true;
+        setTimeout(function() {
+          self.infoToggled = false;
+        }, 5000);
+      }
     },
 
     showUserInfo: function() {
