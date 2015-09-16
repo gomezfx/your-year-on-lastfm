@@ -75,6 +75,7 @@ Vue.directive('slide-in-top', function (value) {
   if (value.bindOn) {
     Vue.nextTick(function () {
 
+
       new ScrollMagic.Scene({
         triggerElement: elem,
         triggerHook: value.triggerHook,
@@ -86,8 +87,8 @@ Vue.directive('slide-in-top', function (value) {
       var timeline = new TimelineMax();
 
       timeline
-        .fromTo(elem, 0.5, { opacity: 0.3 }, { opacity: 1, ease: Power1.easeOut })
-        .to(elem, 0.5, { opacity: 0.3, ease: Power1.easeIn });
+        .fromTo(elem, 0.5, { opacity: 0.3 }, { opacity: 1, ease: Power1.easeOut });
+        //.to(elem, 0.5, { opacity: 0.3, ease: Power1.easeIn });
 
       new ScrollMagic.Scene({
         triggerElement: elem,
@@ -101,18 +102,58 @@ Vue.directive('slide-in-top', function (value) {
   }
 });
 
+Vue.directive('fade-in', function(value) {
+  var elem = this.el;
+
+  if (value.bindOn) {
+    Vue.nextTick(function() {
+      var timeline = new TimelineMax();
+
+      timeline
+        .fromTo(elem, 0.5, { opacity: value.start }, { opacity: value.end, ease: Power1.easeOut })
+
+      new ScrollMagic.Scene({
+        triggerElement: elem,
+        triggerHook: value.triggerHook,
+        duration: ($(window).height() * (.5)),
+      })
+      .setTween(timeline)
+      .addTo(scrollMagicController);
+    });
+  }
+});
+
+Vue.directive('change-color', function(value) {
+  var elem = this.el;
+
+  if (value.bindOn) {
+    Vue.nextTick(function() {
+      var timeline = new TimelineMax();
+
+      timeline
+        .fromTo(elem, 0.5, { backgroundColor: value.start }, { backgroundColor: value.end, ease: Power1.easeOut })
+
+      new ScrollMagic.Scene({
+        triggerElement: elem,
+        triggerHook: value.triggerHook,
+        duration: ($(window).height() * (.5)),
+      })
+      .setTween(timeline)
+      .addTo(scrollMagicController);
+    });
+  }
+});
+
 Vue.directive('expand-width', function(value) {
   var elem = this.el;
   var _value = value;
   if(value.bindOn) {
     Vue.nextTick(function () {
       var timeline = new TimelineMax();
-      console.log(_value);
+
       timeline
         .fromTo(elem, 0.5, { width: 0 }, { width: _value.width + "px", ease: Power1.easeOut });
 
-      console.log("Window: " + $(window).height());
-      console.log("Elem: " + $(elem).outerHeight());
       new ScrollMagic.Scene({
         triggerElement: elem,
         triggerHook: value.triggerHook,
@@ -167,7 +208,9 @@ var main = new Vue({
       this.songs[i] = {
         name: "",
         artist: "",
-        playCount: ""      }
+        playCount: "",
+        url: ""
+      }
     }
 
     // Artists
@@ -245,6 +288,7 @@ var main = new Vue({
                 track.name = parsedTrack.name;
                 track.artist = parsedTrack.artist;
                 track.album = parsedTrack.album;
+                track.url = parsedTrack.url;
 
                 tracks.push(track);
               }
@@ -304,6 +348,7 @@ var main = new Vue({
               self.songs[i].name = songArray[i].name;
               self.songs[i].artist = songArray[i].artist;
               self.songs[i].playCount = songArray[i].playCount;
+              self.songs[i].url = songArray[i].url;
             }
 
             // Albums

@@ -28,7 +28,7 @@ html
           .columns.small-12.medium-6.medium-offset-3.text-center.center-vertical
             .introduction__text(v-class="fade-in : initialized") You've scrobbled...
             hr.introduction__hr(v-class="fade-in : initialized")
-            .introduction__scrobble-count(v-count-up="{ bindOn: initialized, start: 0, end: totalScrobbles, duration: 5 }") 0
+            .introduction__scrobble-count(v-count-up="{ bindOn: initialized, start: 0, end: totalScrobbles, duration: 3 }") 0
             hr.introduction__hr(v-class="fade-in : initialized")
             .introduction__text(v-class="fade-in : initialized") times in 2014.
       .row.collapse.max-height(v-show="initialized")
@@ -113,21 +113,18 @@ html
           .transition__title Top 10 Songs
           hr.hr--2.center-horizontal(v-expand-width="{ bindOn: initialized, triggerHook: 1, width: 250 }")
       .background--songs(v-show="initialized")  
-        .row.collapse(v-repeat="song in songs")
-          .columns.small-12.songs__song(v-slide-in-top="{ bindOn: initialized, triggerHook: 1 }")
-            .row.collapse
+        .row.collapse.songs__song(v-repeat="song in songs", v-change-color='{ bindOn: initialized, start: "#000000", end: "#FF1744", triggerHook: .75 }')
+          .columns.small-12
+            .row.collapse(v-fade-in='{ bindOn: initialized, start: 0, end: 1, triggerHook: .75 }')
               .columns.small-1.text-left
-                hr.hr--1
-                br.space
                 .songs__number {{ $index + 1 }}
               .columns.small-10.text-center
-                hr.hr--1
-                br.space
-                .songs__title {{ song.name }}
-                .songs__artist by {{ song.artist }}
+                .songs__title
+                  a(href="{{ song.url }}")
+                    | {{ song.name }}
+                .songs__artist
+                  a(href="") {{ song.artist }}
               .columns.small-1.text-right
-                hr.hr--1
-                br.space
                 .songs__number {{ song.playCount | addCommas }}
                 .songs__scrobbles scrobbles
       .row.collapse.max-height(v-show="initialized")
@@ -152,6 +149,16 @@ html
         .columns.small-12.text-center.center-vertical
           .transition__title Seasonal Listens
             hr.hr--2.center-horizontal(v-expand-width="{ bindOn : initialized, triggerHook: 1, width: 250}")
+      .background--seasons
+        .row.collapse.max-height
+          .columns.small-3.text-center
+            | Spring
+          .columns.small-3.text-center
+            | Summer
+          .columns.small-3.text-center
+            | Fall
+          .columns.small-3.text-center
+            | Winter
       .row.collapse.max-height.fin(v-show="initialized")
         .columns.small-12.text-center.center-vertical
           .transition__title Fin

@@ -35,13 +35,14 @@ br.space {
 }
 
 a {
-  color: #3D5AFE;
+  color: #0030FF;
   font-style: ;
   transition: all .175s ease-in-out;
+  text-decoration: line-through;
 }
 
 a:hover {
-  color: #F50057;
+  color: #FF1744;
 }
 
 hr {
@@ -308,7 +309,7 @@ hr {
   margin: 4rem 0 4rem 0;
   padding: 0;
   opacity: 0;
-  transition: all .175s ease-in-out 5s;
+  transition: all .175s ease-in-out 3s;
 }
 
 .introduction__name {
@@ -329,7 +330,7 @@ hr {
   font-weight: 300;
   color: #FFFFFF;
   opacity: 0;
-  transition: all .175s ease-in-out 5s;
+  transition: all .175s ease-in-out 3s;
 }
 
 .introduction__scrobble-count {
@@ -345,8 +346,7 @@ hr {
 }
 
 .albums {
-  padding: 4em;
-  border: 1px solid black;
+
 }
 
 .albums__album-wrapper {
@@ -453,8 +453,7 @@ hr {
 }
 
 .artists {
-  padding: 4em;
-  border: 1px solid black;
+
 }
 
 .artists__artist-wrapper {
@@ -603,36 +602,49 @@ hr {
 }
 
 .songs__song {
-  margin-top: 2rem;
-  margin-bottom: 2rem;
+  padding: 1rem;
 }
 
 .songs__number {
-  font-size: 1rem;
-  line-height: 1rem;
+  font-size: 0.707rem;
+  line-height: 0.707rem;
   font-weight: 600;
-  color: #000000;
+  color: #FFFFFF;
 }
 
 .songs__scrobbles {
-  font-size: 1rem;
-  line-height: 1rem;
+  font-size: 0.707rem;
+  line-height: 0.707rem;
   font-weight: 300;
-  color: #000000;
+  color: #FFFFFF;
 }
 
 .songs__title {
-  font-size: 3.998rem;
-  line-height: 3.998rem;
+  font-size: 1.999rem;
+  line-height: 1.99rem;
   font-weight: 600;
   color: #000000;
 }
 
-.songs__artist {
-  font-size: 2.827rem;
-  line-height: 3.998rem;
-  font-weight: 300;
+.songs__title a, .songs__artist a {
+  color: #FFFFFF;
+}
+
+.songs__title a:hover, .songs__artist a:hover {
   color: #000000;
+  text-decoration: none;
+}
+
+.songs__artist {
+  font-size: 1rem;
+  line-height: 1rem;
+  font-weight: 300;
+  color: #FFFFFF;
+}
+
+.slide-up {
+  position: relative;
+  z-index: 2;
 }
 
 .slide-in-right {
@@ -812,4 +824,13 @@ hr {
 
 .fin {
   position: relative;
+}
+
+.fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  z-index: 2;
 }

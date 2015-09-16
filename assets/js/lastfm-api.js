@@ -191,13 +191,12 @@ LastFmApiClient.prototype.getRecentTracks = function(user, page, limit, from, to
     var length;
     if (!parsed.hasOwnProperty('recenttracks')) {
       length = 0;
-    }
-    else if (parsed.recenttracks.track === undefined) {
+    } else if (parsed.recenttracks.track === undefined) {
       length = 0;
     } else {
       length = parsed.recenttracks.track.length;
     }
-
+    console.log(parsed);
     var page = {};
     page.totalPages = parsed.recenttracks["@attr"].totalPages;
     page.page = parsed.recenttracks["@attr"].page;
@@ -211,7 +210,7 @@ LastFmApiClient.prototype.getRecentTracks = function(user, page, limit, from, to
       page.tracks[i].artist = itr.artist["#text"];
       page.tracks[i].name = itr.name;
       page.tracks[i].album = itr.album["#text"];
-      //console.log(parsed.recenttracks.track[i].name + " | " + parsed.recenttracks.track[i].date['#text']);
+      page.tracks[i].url = itr.url;
     }
 
     deferred.resolve(page);
