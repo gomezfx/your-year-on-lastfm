@@ -189,6 +189,7 @@ LastFmApiClient.prototype.getRecentTracks = function(user, page, limit, from, to
     var parsed = JSON.parse(json);
     var tracks = [];
     var length;
+
     if (!parsed.hasOwnProperty('recenttracks')) {
       length = 0;
     } else if (parsed.recenttracks.track === undefined) {
@@ -211,6 +212,7 @@ LastFmApiClient.prototype.getRecentTracks = function(user, page, limit, from, to
       page.tracks[i].name = itr.name;
       page.tracks[i].album = itr.album["#text"];
       page.tracks[i].songUrl = itr.url;
+      page.tracks[i].date = itr.date.uts;
     }
 
     deferred.resolve(page);

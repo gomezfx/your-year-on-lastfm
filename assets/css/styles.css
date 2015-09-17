@@ -198,6 +198,19 @@ hr {
   line-height: 2.827rem;
 }
 
+.menu-items-content ul li {
+  color: #FF1744;
+  font-weight: 600;
+  transition: all .175s ease-in-out;
+  text-decoration: line-through;
+  cursor: pointer;
+}
+
+.menu-items-content ul li:hover {
+  color: #000000;
+  text-decoration: none;
+}
+
 .menu-items.slide-in {
   height: 100%;
   opacity: 1;

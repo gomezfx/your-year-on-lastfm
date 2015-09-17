@@ -19,13 +19,13 @@ html
         .menu-items-content.center-vertical.center-horizontal
           ul
             li
-              a(href="") Top 5 Albums
+              span(v-scroll-to='{ to: ".background--albums" }', v-on="click: menuToggled = false") Top 5 Albums
             li
-              a(href="") Top 10 Songs
+              span(v-scroll-to='{ to: ".background--songs" }', v-on="click: menuToggled = false") Top 10 Songs
             li
-              a(href="") Top 5 Artists
+              span(v-scroll-to='{ to: ".background--artists" }', v-on="click: menuToggled = false") Top 5 Artists
             li
-              a(href="") Seasonal Listens
+              span(v-scroll-to='{ to: ".background--seasons" }', v-on="click: menuToggled = false") Seasonal Listens
     .info-modal__wrapper
       .info-modal__content
     .background--start.slide-out-top.vh-100(v-class="active: initialized")
@@ -60,7 +60,7 @@ html
           .introduction__scrobble-count(v-count-up="{ bindOn: initialized, start: 0, end: totalScrobbles, duration: 3 }") 0
           hr.introduction__hr(v-class="fade-in : initialized")
           .introduction__text(v-class="fade-in : initialized") times in 2014.
-    .row.collapse.menu-trigger.vh-100(v-show="initialized")
+    .row.collapse.menu-trigger.vh-100.albums-trigger(v-show="initialized")
       .columns.small-12.text-center.center-vertical
         .transition__title Top 5 Albums
         hr.hr--2.center-horizontal(v-expand-width="{ bindOn: initialized, triggerHook: 1, width: 250 }")

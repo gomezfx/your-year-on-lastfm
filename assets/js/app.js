@@ -26,6 +26,16 @@ Vue.filter('isEven', function (x) {
   }
 });
 
+Vue.directive('scroll-to', function(value) {
+  var elem = this.el;
+  var to = value.to;
+  $(elem).click(function() {
+    $('body,html').animate({
+      scrollTop: $(to).offset().top
+    }, 800);
+  });
+});
+
 Vue.directive('back-to-top', function(value) {
   var elem = this.el;
 
@@ -244,7 +254,9 @@ var main = new Vue({
     songs: [],
     totalScrobbles: 0,
     artistsToggled: false,
-    menuToggled: false
+    menuToggled: false,
+    springListens: {},
+    summerListens: {}
   },
 
   created: function() {
@@ -350,6 +362,7 @@ var main = new Vue({
                 track.artist = parsedTrack.artist;
                 track.album = parsedTrack.album;
                 track.songUrl = parsedTrack.songUrl;
+                track.date = parsedTrack.date;
 
                 tracks.push(track);
               }
@@ -359,8 +372,34 @@ var main = new Vue({
             var albumMap = {};
             var artistMap = {};
 
+            var springStart = 1395273600;
+            var summerStart = 1403308800;
+            var fallStart = 1411430400;
+            var winterStart = 0;
+
+            var springMap = {};
+            springMap.songMap = {};
+            springMap.albumMap = {};
+            springMap.artistMap = {};
+            springMap.from = springStart;
+            springMap.to = summerStart;
+
+            var summerMap = {};
+            summerMap.songMap = {};
+            summerMap.albumMap = {};
+            summerMap.artistMap = {};
+            summerMap.from = summerStart;
+            summerMap.to = fallStart;
+
+            var seasonMapArray = new Array();
+            seasonMapArray.push(springMap);
+            seasonMapArray.push(summerMap);
+
+            var springSongs = new Array();
+
             for (var i = 0; i < tracks.length; i++) {
               var trackItr = tracks[i];
+              var date = trackItr.date;
               var songKey = (trackItr.name + trackItr.artist).hashCode();
               var albumKey = (trackItr.album + trackItr.artist).hashCode();
               var artistKey = (trackItr.artist).hashCode();
@@ -368,7 +407,11 @@ var main = new Vue({
               if (songMap.hasOwnProperty(songKey)) {
                 songMap[songKey].playCount++;
               } else {
-                songMap[songKey] = trackItr;
+                songMap[songKey] = {};
+                songMap[songKey].name = trackItr.name;
+                songMap[songKey].artist = trackItr.artist;
+                songMap[songKey].album = trackItr.album;
+                songMap[songKey].songUrl = trackItr.songUrl;
                 songMap[songKey].playCount = 1;
               }
 
@@ -388,6 +431,16 @@ var main = new Vue({
                 artistMap[artistKey].artist = trackItr.artist;
                 artistMap[artistKey].playCount = 1;
               }
+
+              for (var j = 0; j < seasonMapArray.length; j++) {
+                var seasonMap = seasonMapArray[j];
+
+                if ((date >= seasonMap.from) && (date < seasonMap.to)) {
+                  addToSongMap(trackItr, seasonMap.songMap, songKey);
+                  addToAlbumMap(trackItr, seasonMap.albumMap, albumKey);
+                  addToArtistMap(trackItr, seasonMap.artistMap, artistKey)
+                }
+              }
             }
 
             self.totalScrobbles = tracks.length;
@@ -395,15 +448,7 @@ var main = new Vue({
             // Songs
 
             var songArray = new Array();
-
-            for (var key in songMap) {
-              var obj = songMap[key];
-              songArray.push(obj);
-            }
-
-            songArray.sort(function (a, b) {
-              return b.playCount - a.playCount;
-            });
+            sortArrayByPlayCount(songMap, songArray);
 
             var songResults = [];
 
@@ -425,15 +470,7 @@ var main = new Vue({
             // Albums
 
             var albumArray = new Array();
-
-            for (var key in albumMap) {
-              var obj = albumMap[key];
-              albumArray.push(obj);
-            }
-
-            albumArray.sort(function (a, b) {
-              return b.playCount - a.playCount;
-            });
+            sortArrayByPlayCount(albumMap, albumArray);
 
             var albumImageResults = [];
             var albumArtistResults = [];
@@ -471,15 +508,7 @@ var main = new Vue({
             // Artists
 
             var artistArray = new Array();
-
-            for (var key in artistMap) {
-              var obj = artistMap[key];
-              artistArray.push(obj);
-            }
-
-            artistArray.sort(function (a, b) {
-              return b.playCount - a.playCount;
-            });
+            sortArrayByPlayCount(artistMap, artistArray);
             
             var artistResults = [];
 
@@ -501,6 +530,14 @@ var main = new Vue({
               self.loading = false;
             });
 
+            // Spring
+            var springSongArray = new Array();
+            var springAlbumArray = new Array();
+            var springArtistArray = new Array();
+
+            sortArrayByPlayCount(springMap.songMap, springSongArray);
+            sortArrayByPlayCount(springMap.albumMap, springAlbumArray);
+            sortArrayByPlayCount(springMap.artistMap, springArtistArray);
           });
         });
       });
@@ -537,4 +574,65 @@ String.prototype.hashCode = function() {
     hash |= 0; // Convert to 32bit integer
   }
   return hash;
+};
+
+function addToSongMap(track, map, key) {
+  var copy = {};
+  copy.name = track.name;
+  copy.artist = track.artist;
+  copy.album = track.album;
+  copy.songUrl = track.songUrl;
+
+  if (map.hasOwnProperty(key)) {
+    map[key].playCount++;
+  } else {
+    copy.playCount = 1;
+    map[key] = copy;
+  }
+};
+
+function addToAlbumMap(track, map, key) {
+  var copy = {};
+  copy.album = track.album;
+  copy.artist = track.artist;
+
+  if (map.hasOwnProperty(key)) {
+    map[key].playCount++;
+  } else {
+    copy.playCount = 1;
+    map[key] = copy;
+  }
+};
+
+function addToArtistMap(track, map, key) {
+  var copy = {};
+  copy.artist = track.artist;
+
+  if (map.hasOwnProperty(key)) {
+    map[key].playCount++;
+  } else {
+    copy.playCount = 1;
+    map[key] = copy;
+  }
+};
+
+function copyObject(obj) {
+    var newObj = {};
+    for (var key in obj) {
+        //copy all the fields
+        newObj[key] = obj[key];
+    }
+
+    return newObj;
+};
+
+function sortArrayByPlayCount(map, array) {
+  for (var key in map) {
+    var obj = map[key];
+    array.push(obj);
+  }
+
+  array.sort(function (a, b) {
+    return b.playCount - a.playCount;
+  });
 };
