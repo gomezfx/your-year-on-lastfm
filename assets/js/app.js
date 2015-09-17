@@ -26,6 +26,16 @@ Vue.filter('isEven', function (x) {
   }
 });
 
+Vue.directive('back-to-top', function(value) {
+  var elem = this.el;
+
+  $(elem).click(function() {
+    $('body,html').animate({
+      scrollTop: 0
+    }, 800);
+  });
+});
+
 Vue.directive('count-up', function(value) {
   if (value.bindOn) {
     var options = {
@@ -119,36 +129,28 @@ Vue.directive('fade-in-menu', function(value) {
 
   if (value.bindOn) {
     Vue.nextTick(function() {
-      var timeline = new TimelineMax();
-
-      timeline
-        .fromTo(elem, .175, { backgroundColor: "transparent" }, { backgroundColor: "rgba(255,255,255,.75)", ease: Power1.easeOut })
 
       new ScrollMagic.Scene({
         triggerElement: $('.menu-trigger')[0],
         triggerHook: 0,
       })
-      .setTween(timeline)
+      .setClassToggle(elem, "fade-in")
       .addTo(scrollMagicController);
     });
   }
 });
 
-Vue.directive('fade-in-menu-avatar', function(value) {
+Vue.directive('fade-in-menu-elem', function(value) {
   var elem = this.el;
 
   if (value.bindOn) {
     Vue.nextTick(function() {
-      var timeline = new TimelineMax();
-
-      timeline
-        .fromTo(elem, .175, { opacity: 0 }, { opacity: 1, ease: Power1.easeOut })
 
       new ScrollMagic.Scene({
         triggerElement: $('.menu-trigger')[0],
         triggerHook: 0,
       })
-      .setTween(timeline)
+      .setClassToggle(elem, "fade-in")
       .addTo(scrollMagicController);
     });
   }
@@ -241,7 +243,8 @@ var main = new Vue({
     albumsToggled: false,
     songs: [],
     totalScrobbles: 0,
-    artistsToggled: false
+    artistsToggled: false,
+    menuToggled: false
   },
 
   created: function() {

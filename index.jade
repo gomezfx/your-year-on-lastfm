@@ -9,9 +9,13 @@ html
     link(rel='stylesheet' href='https://fonts.googleapis.com/css?family=Libre+Baskerville' type='text/css')
     link(rel="stylesheet" href="assets/css/styles.css")
   body
-    .max-height(id="main")
+    .max-height(id="main", v-class="disable-scroll : menuToggled")
       .menu(v-show="initialized", v-fade-in-menu='{ bindOn: initialized }')
-        .menu-avatar(style="background-image: url({{ avatarSource }})", v-fade-in-menu-avatar='{ bindOn: initialized }')
+        .menu-avatar(style="background-image: url({{ avatarSource }})", v-fade-in-menu-elem='{ bindOn: initialized }', v-back-to-top="{}")
+        .menu-toggle(v-on="click : menuToggled = !menuToggled", v-fade-in-menu-elem='{ bindOn: initialized }')
+          .c-hamburger.c-hamburger--htx(v-class="is-active : menuToggled")
+            span toggle menu
+      .menu-items(v-class="slide-in : menuToggled")
       .info-modal__wrapper
         .info-modal__content
       .background--start.slide-out-top(v-class="active: initialized")
