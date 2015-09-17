@@ -10,11 +10,22 @@ html
     link(rel="stylesheet" href="assets/css/styles.css")
   body(id="main", v-class="disable-scroll : menuToggled")
     .menu(v-show="initialized", v-fade-in-menu='{ bindOn: initialized }')
-      .menu-avatar(style="background-image: url({{ avatarSource }})", v-fade-in-menu-elem='{ bindOn: initialized }', v-back-to-top="{}")
+      .menu-avatar(style="background-image: url({{ avatarSource }})", v-fade-in-menu-elem='{ bindOn: initialized }', v-back-to-top="{}", v-on="click : menuToggled = false")
       .menu-toggle(v-on="click : menuToggled = !menuToggled", v-fade-in-menu-elem='{ bindOn: initialized }')
         .c-hamburger.c-hamburger--htx(v-class="is-active : menuToggled")
           span toggle menu
     .menu-items(v-class="slide-in : menuToggled")
+      .menu-items-wrapper
+        .menu-items-content.center-vertical.center-horizontal
+          ul
+            li
+              a(href="") Top 5 Albums
+            li
+              a(href="") Top 10 Songs
+            li
+              a(href="") Top 5 Artists
+            li
+              a(href="") Seasonal Listens
     .info-modal__wrapper
       .info-modal__content
     .background--start.slide-out-top.vh-100(v-class="active: initialized")
