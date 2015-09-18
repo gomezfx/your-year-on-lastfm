@@ -218,12 +218,36 @@ html
       .row.collapse.h-100
         .columns.small-3.text-center
           | Spring
+          br
+          | Top Album: {{ springListens.album.album }}
+          br
+          | Top Song: {{ springListens.song.name }}
+          br
+          | Top: Artist {{ springListens.artist.artist }}
         .columns.small-3.text-center
           | Summer
+          br
+          | Top Album: {{ summerListens.album.album }}
+          br
+          | Top Song: {{ summerListens.song.name }}
+          br
+          | Top: Artist {{ summerListens.artist.artist }}
         .columns.small-3.text-center
           | Fall
+          br
+          | Top Album: {{ fallListens.album.album }}
+          br
+          | Top Song: {{ fallListens.song.name }}
+          br
+          | Top: Artist {{ fallListens.artist.artist }}
         .columns.small-3.text-center
           | Winter
+          br
+          | Top Album: {{ winterListens.album.album }}
+          br
+          | Top Song: {{ winterListens.song.name }}
+          br
+          | Top: Artist {{ winterListens.artist.artist }}
     .row.collapse.vh-100.fin(v-show="initialized")
       .columns.small-12.text-center.center-vertical
         .transition__title Fin

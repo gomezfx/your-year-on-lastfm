@@ -256,7 +256,9 @@ var main = new Vue({
     artistsToggled: false,
     menuToggled: false,
     springListens: {},
-    summerListens: {}
+    summerListens: {},
+    fallListens: {},
+    winterListens: {}
   },
 
   created: function() {
@@ -372,10 +374,11 @@ var main = new Vue({
             var albumMap = {};
             var artistMap = {};
 
+            var yearStart = 1388534400;
             var springStart = 1395273600;
             var summerStart = 1403308800;
             var fallStart = 1411430400;
-            var winterStart = 0;
+            var winterStart = 1419120000;
 
             var springMap = {};
             springMap.songMap = {};
@@ -391,11 +394,25 @@ var main = new Vue({
             summerMap.from = summerStart;
             summerMap.to = fallStart;
 
+            var fallMap = {};
+            fallMap.songMap = {};
+            fallMap.albumMap = {};
+            fallMap.artistMap = {};
+            fallMap.from = fallStart;
+            fallMap.to = winterStart;
+
+            var winterMap = {};
+            winterMap.songMap = {};
+            winterMap.albumMap = {};
+            winterMap.artistMap = {};
+            winterMap.from = yearStart;
+            winterMap.to = springStart;
+
             var seasonMapArray = new Array();
             seasonMapArray.push(springMap);
             seasonMapArray.push(summerMap);
-
-            var springSongs = new Array();
+            seasonMapArray.push(fallMap);
+            seasonMapArray.push(winterMap);
 
             for (var i = 0; i < tracks.length; i++) {
               var trackItr = tracks[i];
@@ -538,6 +555,59 @@ var main = new Vue({
             sortArrayByPlayCount(springMap.songMap, springSongArray);
             sortArrayByPlayCount(springMap.albumMap, springAlbumArray);
             sortArrayByPlayCount(springMap.artistMap, springArtistArray);
+
+            var springListens = {};
+            springListens.song = springSongArray[0];
+            springListens.album = springAlbumArray[0];
+            springListens.artist = springArtistArray[0];
+            self.springListens = springListens;
+
+            // Summer
+
+            var summerSongArray = new Array();
+            var summerAlbumArray = new Array();
+            var summerArtistArray = new Array();
+
+            sortArrayByPlayCount(summerMap.songMap, summerSongArray);
+            sortArrayByPlayCount(summerMap.albumMap, summerAlbumArray);
+            sortArrayByPlayCount(summerMap.artistMap, summerArtistArray);
+
+            var summerListens = {};
+            summerListens.song = summerSongArray[0];
+            summerListens.album = summerAlbumArray[0];
+            summerListens.artist = summerArtistArray[0];
+            self.summerListens = summerListens;
+
+            // Fall
+            var fallSongArray = new Array();
+            var fallAlbumArray = new Array();
+            var fallArtistArray = new Array();
+
+            sortArrayByPlayCount(fallMap.songMap, fallSongArray);
+            sortArrayByPlayCount(fallMap.albumMap, fallAlbumArray);
+            sortArrayByPlayCount(fallMap.artistMap, fallArtistArray);
+
+            var fallListens = {};
+            fallListens.song = fallSongArray[0];
+            fallListens.album = fallAlbumArray[0];
+            fallListens.artist = fallArtistArray[0];
+            self.fallListens = fallListens;
+
+            // Winter
+            var winterSongArray = new Array();
+            var winterAlbumArray = new Array();
+            var winterArtistArray = new Array();
+
+            sortArrayByPlayCount(winterMap.songMap, winterSongArray);
+            sortArrayByPlayCount(winterMap.albumMap, winterAlbumArray);
+            sortArrayByPlayCount(winterMap.artistMap, winterArtistArray);
+
+            var winterListens = {};
+            winterListens.song = winterSongArray[0];
+            winterListens.album = winterAlbumArray[0];
+            winterListens.artist = winterArtistArray[0];
+            self.winterListens = winterListens;
+
           });
         });
       });
