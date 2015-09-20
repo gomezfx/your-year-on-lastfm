@@ -215,39 +215,176 @@ html
         .transition__title Seasonal Listens
           hr.hr--2.center-horizontal(v-expand-width="{ bindOn : initialized, triggerHook: 1, width: 250}")
     .background--seasons.vh-100(v-show="initialized")
-      .row.collapse.h-100
-        .columns.small-3.text-center
-          | Spring
-          br
-          | Top Album: {{ springListens.album.album }}
-          br
-          | Top Song: {{ springListens.song.name }}
-          br
-          | Top: Artist {{ springListens.artist.artist }}
-        .columns.small-3.text-center
-          | Summer
-          br
-          | Top Album: {{ summerListens.album.album }}
-          br
-          | Top Song: {{ summerListens.song.name }}
-          br
-          | Top: Artist {{ summerListens.artist.artist }}
-        .columns.small-3.text-center
-          | Fall
-          br
-          | Top Album: {{ fallListens.album.album }}
-          br
-          | Top Song: {{ fallListens.song.name }}
-          br
-          | Top: Artist {{ fallListens.artist.artist }}
-        .columns.small-3.text-center
-          | Winter
-          br
-          | Top Album: {{ winterListens.album.album }}
-          br
-          | Top Song: {{ winterListens.song.name }}
-          br
-          | Top: Artist {{ winterListens.artist.artist }}
+      .row.collapse.h-100.seasons
+        .columns.small-12.center-vertical(v-slide-in-top="{ bindOn: initialized, triggerHook: 1 }")
+          .row.collapse
+            .columns.medium-3.text-left
+              .seasons__icon-wrapper.color-spring
+                .seasons__icon-content
+                  .seasons__icon-tile
+                    .center-vertical
+                      img.svg.seasons__icon-spring(v-replace-svg="{}", src="/assets/img/icon_spring.svg")
+                      .seasons__label-icon Spring
+              .seasons__text
+                .row.collapse.seasons__header
+                  .columns.medium-6.text-left
+                    .seasons__label--bold Top Album
+                  .columns.medium-6.text-right
+                    .seasons__label--bold {{ springListens.album.playCount }}
+                    .seasons__label scrobbles
+                  .columns.small-12
+                    .seasons__hr
+                a(href="")
+                  .truncate {{ springListens.album.album }}
+                a(href="" class="small")
+                  .truncate {{ springListens.album.artist }}
+                .row.collapse.seasons__header
+                  .columns.medium-6.text-left
+                    .seasons__label--bold Top Song
+                  .columns.medium-6.text-right
+                    .seasons__label--bold {{ springListens.song.playCount }}
+                    .seasons__label scrobbles
+                  .columns.small-12
+                    .seasons__hr
+                a(href="")
+                  .truncate {{ springListens.song.name }}
+                a(href="" class="small")
+                  .truncate {{ springListens.song.artist }}
+                .row.collapse.seasons__header
+                  .columns.medium-6.text-left
+                    .seasons__label--bold Top Artist
+                  .columns.medium-6.text-right
+                    .seasons__label--bold {{ springListens.artist.playCount }}
+                    .seasons__label scrobbles
+                  .columns.small-12
+                    .seasons__hr
+                a(href="") {{ springListens.artist.artist }}
+            .columns.medium-3.text-left
+              .seasons__icon-wrapper.color-summer
+                .seasons__icon-content
+                  .seasons__icon-tile
+                    .center-vertical
+                      img.svg.seasons__icon-summer(v-replace-svg="{}", src="/assets/img/icon_summer.svg")
+                      br
+                      .seasons__label-icon Summer
+              .seasons__text
+                .row.collapse.seasons__header
+                  .columns.medium-6.text-left
+                    .seasons__label--bold Top Album
+                  .columns.medium-6.text-right
+                    .seasons__label--bold {{ summerListens.album.playCount }}
+                    .seasons__label scrobbles
+                  .columns.small-12
+                    .seasons__hr
+                a(href="")
+                  .truncate {{ summerListens.album.album }}
+                a(href="" class="small")
+                  .truncate {{ summerListens.album.artist }}
+                .row.collapse.seasons__header
+                  .columns.medium-6.text-left
+                    .seasons__label--bold Top Song
+                  .columns.medium-6.text-right
+                    .seasons__label--bold {{ summerListens.song.playCount }}
+                    .seasons__label scrobbles
+                  .columns.small-12
+                    .seasons__hr
+                a(href="")
+                  .truncate {{ summerListens.song.name }}
+                a(href="" class="small")
+                  .truncate {{ summerListens.song.artist }}
+                .row.collapse.seasons__header
+                  .columns.medium-6.text-left
+                    .seasons__label--bold Top Artist
+                  .columns.medium-6.text-right
+                    .seasons__label--bold {{ summerListens.artist.playCount }}
+                    .seasons__label scrobbles
+                  .columns.small-12
+                    .seasons__hr
+                a(href="") {{ summerListens.artist.artist }}
+            .columns.medium-3.text-left
+              .seasons__icon-wrapper.color-fall
+                .seasons__icon-content
+                  .seasons__icon-tile
+                    .center-vertical
+                      img.svg.seasons__icon-fall(v-replace-svg="{}", src="/assets/img/icon_fall.svg")
+                      br
+                      .seasons__label-icon Fall
+              .seasons__text
+                .row.collapse.seasons__header
+                  .columns.medium-6.text-left
+                    .seasons__label--bold Top Album
+                  .columns.medium-6.text-right
+                    .seasons__label--bold {{ fallListens.album.playCount }}
+                    .seasons__label scrobbles
+                  .columns.small-12
+                    .seasons__hr
+                a(href="")
+                  .truncate {{ fallListens.album.album }}
+                a(href="" class="small")
+                  .truncate {{ fallListens.album.artist }}
+                .row.collapse.seasons__header
+                  .columns.medium-6.text-left
+                    .seasons__label--bold Top Song
+                  .columns.medium-6.text-right
+                    .seasons__label--bold {{ fallListens.song.playCount }}
+                    .seasons__label scrobbles
+                  .columns.small-12
+                    .seasons__hr
+                a(href="")
+                  .truncate {{ fallListens.song.name }}
+                a(href="" class="small")
+                  .truncate {{ fallListens.song.artist }}
+                .row.collapse.seasons__header
+                  .columns.medium-6.text-left
+                    .seasons__label--bold Top Artist
+                  .columns.medium-6.text-right
+                    .seasons__label--bold {{ fallListens.artist.playCount }}
+                    .seasons__label scrobbles
+                  .columns.small-12
+                    .seasons__hr
+                a(href="") {{ fallListens.artist.artist }}
+            .columns.medium-3.text-left
+              .seasons__icon-wrapper.color-winter
+                .seasons__icon-content
+                  .seasons__icon-tile
+                    .center-vertical
+                      img.svg.seasons__icon-winter(v-replace-svg="{}", src="/assets/img/icon_winter.svg")
+                      br
+                      .seasons__label-icon Winter
+              .seasons__text
+                .row.collapse.seasons__header
+                  .columns.medium-6.text-left
+                    .seasons__label--bold Top Album
+                  .columns.medium-6.text-right
+                    .seasons__label--bold {{ winterListens.album.playCount }}
+                    .seasons__label scrobbles
+                  .columns.small-12
+                    .seasons__hr
+                a(href="")
+                  .truncate {{ winterListens.album.album }}
+                a(href="" class="small")
+                  .truncate {{ winterListens.album.artist }}
+                .row.collapse.seasons__header
+                  .columns.medium-6.text-left
+                    .seasons__label--bold Top Song
+                  .columns.medium-6.text-right
+                    .seasons__label--bold {{ winterListens.song.playCount }}
+                    .seasons__label scrobbles
+                  .columns.small-12
+                    .seasons__hr
+                a(href="")
+                  .truncate {{ winterListens.song.name }}
+                a(href="" class="small")
+                  .truncate {{ winterListens.song.artist }}
+                .row.collapse.seasons__header
+                  .columns.medium-6.text-left
+                    .seasons__label--bold Top Artist
+                  .columns.medium-6.text-right
+                    .seasons__label--bold {{ winterListens.artist.playCount }}
+                    .seasons__label scrobbles
+                  .columns.small-12
+                    .seasons__hr
+                a(href="") {{ winterListens.artist.artist }}
     .row.collapse.vh-100.fin(v-show="initialized")
       .columns.small-12.text-center.center-vertical
         .transition__title Fin
