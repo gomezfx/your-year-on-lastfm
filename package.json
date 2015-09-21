@@ -1,0 +1,26 @@
+{
+  "name": "your-year-on-lastfm",
+  "version": "1.0.0",
+  "description": "Your Year on Last.fm",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gomezfx/your-year-on-lastfm.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gomezfx/your-year-on-lastfm/issues"
+  },
+  "homepage": "https://github.com/gomezfx/your-year-on-lastfm#readme",
+  "devDependencies": {
+    "gulp": "^3.9.0",
+    "gulp-clean": "^0.3.1",
+    "gulp-concat": "^2.6.0",
+    "gulp-jade": "^1.1.0",
+    "gulp-uglify": "^1.4.1"
+  }
+}
