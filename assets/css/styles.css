@@ -246,6 +246,18 @@ hr {
   opacity: 1;
 }
 
+.splash__field::-moz-placeholder {
+  color: #FFFFFF;
+  opacity: .75;
+  transition: opacity .175s ease-in-out;
+  -moz-transition: opacity .175s ease-in-out;
+
+}
+
+.splash__field:focus::-moz-placeholder {
+  opacity: 1;
+}
+
 .my-button {
   display: block;
   position: relative;
@@ -996,6 +1008,19 @@ hr {
   width: 20%;
 }
 
+.header-start {
+  position: absolute;
+  top: 1rem;
+  left: 0;
+  width: 100%;
+  color: #FFFFFF;
+  text-align: center;
+  font-family: "Circular";
+  font-weight: 600;
+  line-height: .707rem;
+  font-size: .707rem;
+}
+
 .footer-start {
   position: absolute;
   bottom: 1rem;
@@ -1318,4 +1343,21 @@ hr {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.mobile-message-wrapper {
+  height: 100vh;
+  width: 100%;
+  position: relative;
+  z-index: 100;
+  background-color: #FF1744;
+  font-size: 1rem;
+  line-height: 1rem;
+  color: #FFFFFF;
+  font-weight: 300;
+  text-align: center;
+}
+
+.mobile-message-content {
+
 }

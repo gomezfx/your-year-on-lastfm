@@ -245,7 +245,7 @@ Vue.directive('expand-width', function(value) {
       new ScrollMagic.Scene({
         triggerElement: elem,
         triggerHook: value.triggerHook,
-        duration: (($(window).height()/2) - ($(elem).outerHeight()/2))
+        duration: (($(window).height()/2) - ($(elem).parent().outerHeight()/2))
       })
       .setTween(timeline)
       .addTo(scrollMagicController);
@@ -282,7 +282,8 @@ var main = new Vue({
     springListens: {},
     summerListens: {},
     fallListens: {},
-    winterListens: {}
+    winterListens: {},
+    initializeCounter: 0
   },
 
   created: function() {
@@ -359,280 +360,336 @@ var main = new Vue({
           }
         })(i);
 
+        return Q.all(trackResults);
+      }).then(function(pages) {
+        var allTrackResults = [];
 
-        Q.all(trackResults).then(function(pages) {
-          var allTrackResults = [];
+        for (var i = 0; i < pages.length; i++) {
+          var itr = pages[i];
+          var totalPages = itr.totalPages;
+          var from = itr.from;
+          var to = itr.to;
 
-          for (var i = 0; i < pages.length; i++) {
-            var itr = pages[i];
-            var totalPages = itr.totalPages;
-            var from = itr.from;
-            var to = itr.to;
+          for (var j = 1; j <= totalPages; j++) {
+            allTrackResults.push(client.getRecentTracks(self.username, j, 200, from, to));
+          }
+        }
 
-            for (var j = 1; j <= totalPages; j++) {
-              allTrackResults.push(client.getRecentTracks(self.username, j, 200, from, to));
-            }
+        return Q.all(allTrackResults);
+      }).then(function(pages) {
+        var tracks = new Array();
+
+        for (var i = 0; i < pages.length; i++) {
+          var parsedTracks = pages[i].tracks;
+          
+          for (var j = 0; j < parsedTracks.length; j++) {
+            var track = {};
+            var parsedTrack = parsedTracks[j];
+
+            track.name = parsedTrack.name;
+            track.artist = parsedTrack.artist;
+            track.album = parsedTrack.album;
+            track.songUrl = parsedTrack.songUrl;
+            track.date = parsedTrack.date;
+
+            tracks.push(track);
+          }
+        }
+
+        var songMap = {};
+        var albumMap = {};
+        var artistMap = {};
+
+        var yearStart = 1388534400;
+        var springStart = 1395273600;
+        var summerStart = 1403308800;
+        var fallStart = 1411430400;
+        var winterStart = 1419120000;
+
+        var springMap = {};
+        springMap.songMap = {};
+        springMap.albumMap = {};
+        springMap.artistMap = {};
+        springMap.from = springStart;
+        springMap.to = summerStart;
+
+        var summerMap = {};
+        summerMap.songMap = {};
+        summerMap.albumMap = {};
+        summerMap.artistMap = {};
+        summerMap.from = summerStart;
+        summerMap.to = fallStart;
+
+        var fallMap = {};
+        fallMap.songMap = {};
+        fallMap.albumMap = {};
+        fallMap.artistMap = {};
+        fallMap.from = fallStart;
+        fallMap.to = winterStart;
+
+        var winterMap = {};
+        winterMap.songMap = {};
+        winterMap.albumMap = {};
+        winterMap.artistMap = {};
+        winterMap.from = yearStart;
+        winterMap.to = springStart;
+
+        var seasonMapArray = new Array();
+        seasonMapArray.push(springMap);
+        seasonMapArray.push(summerMap);
+        seasonMapArray.push(fallMap);
+        seasonMapArray.push(winterMap);
+
+        for (var i = 0; i < tracks.length; i++) {
+          var trackItr = tracks[i];
+          var date = trackItr.date;
+          var songKey = (trackItr.name + trackItr.artist).hashCode();
+          var albumKey = (trackItr.album + trackItr.artist).hashCode();
+          var artistKey = (trackItr.artist).hashCode();
+
+          if (songMap.hasOwnProperty(songKey)) {
+            songMap[songKey].playCount++;
+          } else {
+            songMap[songKey] = {};
+            songMap[songKey].name = trackItr.name;
+            songMap[songKey].artist = trackItr.artist;
+            songMap[songKey].album = trackItr.album;
+            songMap[songKey].songUrl = trackItr.songUrl;
+            songMap[songKey].playCount = 1;
           }
 
-          Q.all(allTrackResults).then(function(pages) {
-            var tracks = new Array();
+          if (albumMap.hasOwnProperty(albumKey)) {
+            albumMap[albumKey].playCount++;
+          } else {
+            albumMap[albumKey] = {};
+            albumMap[albumKey].album = trackItr.album;
+            albumMap[albumKey].artist = trackItr.artist;
+            albumMap[albumKey].playCount = 1;
+          }
 
-            for (var i = 0; i < pages.length; i++) {
-              var parsedTracks = pages[i].tracks;
-              
-              for (var j = 0; j < parsedTracks.length; j++) {
-                var track = {};
-                var parsedTrack = parsedTracks[j];
+          if (artistMap.hasOwnProperty(artistKey)) {
+            artistMap[artistKey].playCount++;
+          } else {
+            artistMap[artistKey] = {};
+            artistMap[artistKey].artist = trackItr.artist;
+            artistMap[artistKey].playCount = 1;
+          }
 
-                track.name = parsedTrack.name;
-                track.artist = parsedTrack.artist;
-                track.album = parsedTrack.album;
-                track.songUrl = parsedTrack.songUrl;
-                track.date = parsedTrack.date;
+          for (var j = 0; j < seasonMapArray.length; j++) {
+            var seasonMap = seasonMapArray[j];
 
-                tracks.push(track);
-              }
+            if ((date >= seasonMap.from) && (date < seasonMap.to)) {
+              addToSongMap(trackItr, seasonMap.songMap, songKey);
+              addToAlbumMap(trackItr, seasonMap.albumMap, albumKey);
+              addToArtistMap(trackItr, seasonMap.artistMap, artistKey)
             }
+          }
+        }
 
-            var songMap = {};
-            var albumMap = {};
-            var artistMap = {};
+        self.totalScrobbles = tracks.length;
 
-            var yearStart = 1388534400;
-            var springStart = 1395273600;
-            var summerStart = 1403308800;
-            var fallStart = 1411430400;
-            var winterStart = 1419120000;
+        // Songs
 
-            var springMap = {};
-            springMap.songMap = {};
-            springMap.albumMap = {};
-            springMap.artistMap = {};
-            springMap.from = springStart;
-            springMap.to = summerStart;
+        var songArray = new Array();
+        sortArrayByPlayCount(songMap, songArray);
 
-            var summerMap = {};
-            summerMap.songMap = {};
-            summerMap.albumMap = {};
-            summerMap.artistMap = {};
-            summerMap.from = summerStart;
-            summerMap.to = fallStart;
+        var songResults = [];
 
-            var fallMap = {};
-            fallMap.songMap = {};
-            fallMap.albumMap = {};
-            fallMap.artistMap = {};
-            fallMap.from = fallStart;
-            fallMap.to = winterStart;
+        for (var i = 0; i < 10; i++) {
+          self.songs[i].name = songArray[i].name;
+          self.songs[i].artist = songArray[i].artist;
+          self.songs[i].playCount = songArray[i].playCount;
+          self.songs[i].songUrl = songArray[i].songUrl;
 
-            var winterMap = {};
-            winterMap.songMap = {};
-            winterMap.albumMap = {};
-            winterMap.artistMap = {};
-            winterMap.from = yearStart;
-            winterMap.to = springStart;
+          songResults.push(client.getArtistInfo(songArray[i].artist));
+        }
 
-            var seasonMapArray = new Array();
-            seasonMapArray.push(springMap);
-            seasonMapArray.push(summerMap);
-            seasonMapArray.push(fallMap);
-            seasonMapArray.push(winterMap);
+        Q.all(songResults).then(function (data) {
+          for (var i = 0; i < 10; i++) {
+            self.songs[i].artistUrl = data[i].artistUrl;
+          }
+          self.initializeCounter++;
+        });
 
-            for (var i = 0; i < tracks.length; i++) {
-              var trackItr = tracks[i];
-              var date = trackItr.date;
-              var songKey = (trackItr.name + trackItr.artist).hashCode();
-              var albumKey = (trackItr.album + trackItr.artist).hashCode();
-              var artistKey = (trackItr.artist).hashCode();
+        // Albums
 
-              if (songMap.hasOwnProperty(songKey)) {
-                songMap[songKey].playCount++;
-              } else {
-                songMap[songKey] = {};
-                songMap[songKey].name = trackItr.name;
-                songMap[songKey].artist = trackItr.artist;
-                songMap[songKey].album = trackItr.album;
-                songMap[songKey].songUrl = trackItr.songUrl;
-                songMap[songKey].playCount = 1;
-              }
+        var albumArray = new Array();
+        sortArrayByPlayCount(albumMap, albumArray);
 
-              if (albumMap.hasOwnProperty(albumKey)) {
-                albumMap[albumKey].playCount++;
-              } else {
-                albumMap[albumKey] = {};
-                albumMap[albumKey].album = trackItr.album;
-                albumMap[albumKey].artist = trackItr.artist;
-                albumMap[albumKey].playCount = 1;
-              }
+        var albumImageResults = [];
+        var albumArtistResults = [];
 
-              if (artistMap.hasOwnProperty(artistKey)) {
-                artistMap[artistKey].playCount++;
-              } else {
-                artistMap[artistKey] = {};
-                artistMap[artistKey].artist = trackItr.artist;
-                artistMap[artistKey].playCount = 1;
-              }
+        for(var i = 0; i < 5; i++) {
+          self.albums[i].album = albumArray[i].album;
+          self.albums[i].artist = albumArray[i].artist;
+          self.albums[i].playCount = albumArray[i].playCount;
 
-              for (var j = 0; j < seasonMapArray.length; j++) {
-                var seasonMap = seasonMapArray[j];
+          albumImageResults.push(client.getAlbumInfo(albumArray[i].artist, albumArray[i].album));
+          albumArtistResults.push(client.getArtistInfo(albumArray[i].artist));
+        }
 
-                if ((date >= seasonMap.from) && (date < seasonMap.to)) {
-                  addToSongMap(trackItr, seasonMap.songMap, songKey);
-                  addToAlbumMap(trackItr, seasonMap.albumMap, albumKey);
-                  addToArtistMap(trackItr, seasonMap.artistMap, artistKey)
-                }
-              }
-            }
+        Q.all(albumImageResults).then(function (data) {
+          for (var i = 0; i < data.length; i++) {
+            // 4 is mega size
+            var image = data[i].images[4];
+            self.albums[i].image = image;
+            self.albums[i].albumUrl = data[i].albumUrl;
+          }
 
-            self.totalScrobbles = tracks.length;
+          self.album1 = self.albums[0];
+          self.album2 = self.albums[1];
+          self.album3 = self.albums[2];
+          self.album4 = self.albums[3];
+          self.album5 = self.albums[4];
 
-            // Songs
+          self.initializeCounter++;
+        });
 
-            var songArray = new Array();
-            sortArrayByPlayCount(songMap, songArray);
+        Q.all(albumArtistResults).then(function (data) {
+          for (var i = 0; i < data.length; i++) {
+            self.albums[i].artistUrl = data[i].artistUrl;
+          }
+          self.initializeCounter++;
+        });
 
-            var songResults = [];
+        // Artists
 
-            for (var i = 0; i < 10; i++) {
-              self.songs[i].name = songArray[i].name;
-              self.songs[i].artist = songArray[i].artist;
-              self.songs[i].playCount = songArray[i].playCount;
-              self.songs[i].songUrl = songArray[i].songUrl;
+        var artistArray = new Array();
+        sortArrayByPlayCount(artistMap, artistArray);
+        
+        var artistResults = [];
 
-              songResults.push(client.getArtistInfo(songArray[i].artist));
-            }
+        for(var i = 0; i < 5; i++) {
+          self.artists[i].artist = artistArray[i].artist;
+          self.artists[i].playCount = artistArray[i].playCount;
 
-            Q.all(songResults).then(function (data) {
-              for (var i = 0; i < 10; i++) {
-                self.songs[i].artistUrl = data[i].artistUrl;
-              }
-            });
+          artistResults.push(client.getArtistInfo(artistArray[i].artist));
+        }
 
-            // Albums
+        Q.all(artistResults).then(function (data) {
+          for (var i = 0; i < data.length; i++) {
+            var image = data[i].images[4];
+            self.artists[i].image = image;
+            self.artists[i].artistUrl = data[i].artistUrl;
+          }
 
-            var albumArray = new Array();
-            sortArrayByPlayCount(albumMap, albumArray);
 
-            var albumImageResults = [];
-            var albumArtistResults = [];
+          self.initializeCounter++;
+        });
 
-            for(var i = 0; i < 5; i++) {
-              self.albums[i].album = albumArray[i].album;
-              self.albums[i].artist = albumArray[i].artist;
-              self.albums[i].playCount = albumArray[i].playCount;
+        // Spring
+        var springSongArray = new Array();
+        var springAlbumArray = new Array();
+        var springArtistArray = new Array();
 
-              albumImageResults.push(client.getAlbumInfo(albumArray[i].artist, albumArray[i].album));
-              albumArtistResults.push(client.getArtistInfo(albumArray[i].artist));
-            }
+        sortArrayByPlayCount(springMap.songMap, springSongArray);
+        sortArrayByPlayCount(springMap.albumMap, springAlbumArray);
+        sortArrayByPlayCount(springMap.artistMap, springArtistArray);
 
-            Q.all(albumImageResults).then(function (data) {
-              for (var i = 0; i < data.length; i++) {
-                // 4 is mega size
-                var image = data[i].images[4];
-                self.albums[i].image = image;
-                self.albums[i].albumUrl = data[i].albumUrl;
-              }
+        var springListens = {};
+        springListens.song = springSongArray[0];
+        springListens.album = springAlbumArray[0];
+        springListens.artist = springArtistArray[0];
+        self.springListens = springListens;
 
-              self.album1 = self.albums[0];
-              self.album2 = self.albums[1];
-              self.album3 = self.albums[2];
-              self.album4 = self.albums[3];
-              self.album5 = self.albums[4];
-            });
+        // Summer
 
-            Q.all(albumArtistResults).then(function (data) {
-              for (var i = 0; i < data.length; i++) {
-                self.albums[i].artistUrl = data[i].artistUrl;
-              }
-            });
+        var summerSongArray = new Array();
+        var summerAlbumArray = new Array();
+        var summerArtistArray = new Array();
 
-            // Artists
+        sortArrayByPlayCount(summerMap.songMap, summerSongArray);
+        sortArrayByPlayCount(summerMap.albumMap, summerAlbumArray);
+        sortArrayByPlayCount(summerMap.artistMap, summerArtistArray);
 
-            var artistArray = new Array();
-            sortArrayByPlayCount(artistMap, artistArray);
-            
-            var artistResults = [];
+        var summerListens = {};
+        summerListens.song = summerSongArray[0];
+        summerListens.album = summerAlbumArray[0];
+        summerListens.artist = summerArtistArray[0];
+        self.summerListens = summerListens;
 
-            for(var i = 0; i < 5; i++) {
-              self.artists[i].artist = artistArray[i].artist;
-              self.artists[i].playCount = artistArray[i].playCount;
+        // Fall
+        var fallSongArray = new Array();
+        var fallAlbumArray = new Array();
+        var fallArtistArray = new Array();
 
-              artistResults.push(client.getArtistInfo(artistArray[i].artist));
-            }
+        sortArrayByPlayCount(fallMap.songMap, fallSongArray);
+        sortArrayByPlayCount(fallMap.albumMap, fallAlbumArray);
+        sortArrayByPlayCount(fallMap.artistMap, fallArtistArray);
 
-            Q.all(artistResults).then(function (data) {
-              for (var i = 0; i < data.length; i++) {
-                var image = data[i].images[4];
-                self.artists[i].image = image;
-                self.artists[i].artistUrl = data[i].artistUrl;
-              }
+        var fallListens = {};
+        fallListens.song = fallSongArray[0];
+        fallListens.album = fallAlbumArray[0];
+        fallListens.artist = fallArtistArray[0];
+        self.fallListens = fallListens;
 
-              self.initialized = true;
-              self.loading = false;
-            });
+        // Winter
+        var winterSongArray = new Array();
+        var winterAlbumArray = new Array();
+        var winterArtistArray = new Array();
 
-            // Spring
-            var springSongArray = new Array();
-            var springAlbumArray = new Array();
-            var springArtistArray = new Array();
+        sortArrayByPlayCount(winterMap.songMap, winterSongArray);
+        sortArrayByPlayCount(winterMap.albumMap, winterAlbumArray);
+        sortArrayByPlayCount(winterMap.artistMap, winterArtistArray);
 
-            sortArrayByPlayCount(springMap.songMap, springSongArray);
-            sortArrayByPlayCount(springMap.albumMap, springAlbumArray);
-            sortArrayByPlayCount(springMap.artistMap, springArtistArray);
+        var winterListens = {};
+        winterListens.song = winterSongArray[0];
+        winterListens.album = winterAlbumArray[0];
+        winterListens.artist = winterArtistArray[0];
+        self.winterListens = winterListens;
 
-            var springListens = {};
-            springListens.song = springSongArray[0];
-            springListens.album = springAlbumArray[0];
-            springListens.artist = springArtistArray[0];
-            self.springListens = springListens;
+        var albumResults = [];
+        var songResults = [];
+        var artistResults = [];
 
-            // Summer
+        albumResults.push(client.getAlbumInfo(springAlbumArray[0].artist, springAlbumArray[0].album));
+        albumResults.push(client.getAlbumInfo(summerAlbumArray[0].artist, summerAlbumArray[0].album));
+        albumResults.push(client.getAlbumInfo(fallAlbumArray[0].artist, fallAlbumArray[0].album));
+        albumResults.push(client.getAlbumInfo(winterAlbumArray[0].artist, winterAlbumArray[0].album));
+        albumResults.push(client.getArtistInfo(springAlbumArray[0].artist));
+        albumResults.push(client.getArtistInfo(summerAlbumArray[0].artist));
+        albumResults.push(client.getArtistInfo(fallAlbumArray[0].artist));
+        albumResults.push(client.getArtistInfo(winterAlbumArray[0].artist));
 
-            var summerSongArray = new Array();
-            var summerAlbumArray = new Array();
-            var summerArtistArray = new Array();
+        Q.all(albumResults).then(function (data) {
+          self.springListens.album.$add('albumUrl', data[0].albumUrl);
+          self.summerListens.album.$add('albumUrl', data[1].albumUrl);
+          self.fallListens.album.$add('albumUrl', data[2].albumUrl);
+          self.winterListens.album.$add('albumUrl', data[3].albumUrl);
+          self.springListens.album.$add('artistUrl', data[4].artistUrl);
+          self.summerListens.album.$add('artistUrl', data[5].artistUrl);
+          self.fallListens.album.$add('artistUrl', data[6].artistUrl);
+          self.winterListens.album.$add('artistUrl', data[7].artistUrl);
 
-            sortArrayByPlayCount(summerMap.songMap, summerSongArray);
-            sortArrayByPlayCount(summerMap.albumMap, summerAlbumArray);
-            sortArrayByPlayCount(summerMap.artistMap, summerArtistArray);
+          self.initializeCounter++;
+        });
 
-            var summerListens = {};
-            summerListens.song = summerSongArray[0];
-            summerListens.album = summerAlbumArray[0];
-            summerListens.artist = summerArtistArray[0];
-            self.summerListens = summerListens;
+        songResults.push(client.getArtistInfo(springSongArray[0].artist));
+        songResults.push(client.getArtistInfo(summerSongArray[0].artist));
+        songResults.push(client.getArtistInfo(fallSongArray[0].artist));
+        songResults.push(client.getArtistInfo(winterSongArray[0].artist));
 
-            // Fall
-            var fallSongArray = new Array();
-            var fallAlbumArray = new Array();
-            var fallArtistArray = new Array();
+        Q.all(songResults).then(function (data) {
+          self.springListens.song.$add('artistUrl', data[0].artistUrl);
+          self.summerListens.song.$add('artistUrl', data[1].artistUrl);
+          self.fallListens.song.$add('artistUrl', data[2].artistUrl);
+          self.winterListens.song.$add('artistUrl', data[3].artistUrl);
 
-            sortArrayByPlayCount(fallMap.songMap, fallSongArray);
-            sortArrayByPlayCount(fallMap.albumMap, fallAlbumArray);
-            sortArrayByPlayCount(fallMap.artistMap, fallArtistArray);
+          self.initializeCounter++;
+        });
 
-            var fallListens = {};
-            fallListens.song = fallSongArray[0];
-            fallListens.album = fallAlbumArray[0];
-            fallListens.artist = fallArtistArray[0];
-            self.fallListens = fallListens;
+        artistResults.push(client.getArtistInfo(springArtistArray[0].artist));
+        artistResults.push(client.getArtistInfo(summerArtistArray[0].artist));
+        artistResults.push(client.getArtistInfo(fallArtistArray[0].artist));
+        artistResults.push(client.getArtistInfo(winterArtistArray[0].artist));
 
-            // Winter
-            var winterSongArray = new Array();
-            var winterAlbumArray = new Array();
-            var winterArtistArray = new Array();
+        Q.all(artistResults).then(function (data) {
+          self.springListens.artist.$add('artistUrl', data[0].artistUrl);
+          self.summerListens.artist.$add('artistUrl', data[1].artistUrl);
+          self.fallListens.artist.$add('artistUrl', data[2].artistUrl);
+          self.winterListens.artist.$add('artistUrl', data[3].artistUrl);
 
-            sortArrayByPlayCount(winterMap.songMap, winterSongArray);
-            sortArrayByPlayCount(winterMap.albumMap, winterAlbumArray);
-            sortArrayByPlayCount(winterMap.artistMap, winterArtistArray);
-
-            var winterListens = {};
-            winterListens.song = winterSongArray[0];
-            winterListens.album = winterAlbumArray[0];
-            winterListens.artist = winterArtistArray[0];
-            self.winterListens = winterListens;
-
-          });
+          self.initializeCounter++;
         });
       });
     },
@@ -658,6 +715,18 @@ var main = new Vue({
 
   }
 });
+
+main.$watch(
+  function () {
+    return this.initializeCounter;
+  },
+  function (newVal, oldVal) {
+    if (newVal === 7) {
+      this.initialized = true;
+      this.loading = false;
+    }
+  }
+)
 
 String.prototype.hashCode = function() {
   var hash = 0, i, chr, len;

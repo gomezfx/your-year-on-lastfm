@@ -9,6 +9,8 @@ html
     link(rel='stylesheet' href='https://fonts.googleapis.com/css?family=Libre+Baskerville' type='text/css')
     link(rel="stylesheet" href="assets/css/styles.css")
   body(id="main", v-class="disable-scroll : menuToggled")
+    .mobile-message-wrapper.show-for-small-only
+      .mobile-message-content.center-vertical Mobile site coming soon...
     .menu(v-show="initialized", v-fade-in-menu='{ bindOn: initialized }')
       .menu-avatar(style="background-image: url({{ avatarSource }})", v-fade-in-menu-elem='{ bindOn: initialized }', v-back-to-top="{}", v-on="click : menuToggled = false")
       .menu-toggle(v-on="click : menuToggled = !menuToggled", v-fade-in-menu-elem='{ bindOn: initialized }')
@@ -26,9 +28,7 @@ html
               span(v-scroll-to='{ to: ".background--artists" }', v-on="click: menuToggled = false") Top 5 Artists
             li
               span(v-scroll-to='{ to: ".background--seasons" }', v-on="click: menuToggled = false") Seasonal Listens
-    .info-modal__wrapper
-      .info-modal__content
-    .background--start.slide-out-top.vh-100(v-class="active: initialized")
+    .background--start.slide-out-top.vh-100.hide-for-small-only(v-class="active: initialized")
       .row.splash.h-100
         .columns.small-12.text-center.center-vertical
           br
@@ -234,9 +234,9 @@ html
                     .seasons__label scrobbles
                   .columns.small-12
                     .seasons__hr
-                a(href="")
+                a(href="{{ springListens.album.albumUrl }}" target="_blank")
                   .truncate {{ springListens.album.album }}
-                a(href="" class="small")
+                a(href="{{ springListens.album.artistUrl }}" class="small" target="_blank")
                   .truncate {{ springListens.album.artist }}
                 .row.collapse.seasons__header
                   .columns.medium-6.text-left
@@ -246,9 +246,9 @@ html
                     .seasons__label scrobbles
                   .columns.small-12
                     .seasons__hr
-                a(href="")
+                a(href="{{ springListens.song.songUrl }}" target="_blank")
                   .truncate {{ springListens.song.name }}
-                a(href="" class="small")
+                a(href="{{ springListens.song.artistUrl }}" class="small" target="_blank")
                   .truncate {{ springListens.song.artist }}
                 .row.collapse.seasons__header
                   .columns.medium-6.text-left
@@ -258,7 +258,7 @@ html
                     .seasons__label scrobbles
                   .columns.small-12
                     .seasons__hr
-                a(href="") {{ springListens.artist.artist }}
+                a(href="{{ springListens.artist.artistUrl }}" target="_blank") {{ springListens.artist.artist }}
             .columns.medium-3.text-left
               .seasons__icon-wrapper.color-summer
                 .seasons__icon-content
@@ -276,9 +276,9 @@ html
                     .seasons__label scrobbles
                   .columns.small-12
                     .seasons__hr
-                a(href="")
+                a(href="{{ summerListens.album.albumUrl }}" target="_blank")
                   .truncate {{ summerListens.album.album }}
-                a(href="" class="small")
+                a(href="{{ summerListens.album.artistUrl }}" class="small" target="_blank")
                   .truncate {{ summerListens.album.artist }}
                 .row.collapse.seasons__header
                   .columns.medium-6.text-left
@@ -288,9 +288,9 @@ html
                     .seasons__label scrobbles
                   .columns.small-12
                     .seasons__hr
-                a(href="")
+                a(href="{{ summerListens.song.songUrl }}" target="_blank")
                   .truncate {{ summerListens.song.name }}
-                a(href="" class="small")
+                a(href="{{ summerListens.song.artistUrl }}" class="small" target="_blank")
                   .truncate {{ summerListens.song.artist }}
                 .row.collapse.seasons__header
                   .columns.medium-6.text-left
@@ -300,7 +300,7 @@ html
                     .seasons__label scrobbles
                   .columns.small-12
                     .seasons__hr
-                a(href="") {{ summerListens.artist.artist }}
+                a(href="{{ summerListens.artist.artistUrl }}" target="_blank") {{ summerListens.artist.artist }}
             .columns.medium-3.text-left
               .seasons__icon-wrapper.color-fall
                 .seasons__icon-content
@@ -318,9 +318,9 @@ html
                     .seasons__label scrobbles
                   .columns.small-12
                     .seasons__hr
-                a(href="")
+                a(href="{{ fallListens.album.albumUrl }}" target="_blank")
                   .truncate {{ fallListens.album.album }}
-                a(href="" class="small")
+                a(href="{{ fallListens.album.artistUrl }}" class="small" target="_blank")
                   .truncate {{ fallListens.album.artist }}
                 .row.collapse.seasons__header
                   .columns.medium-6.text-left
@@ -330,9 +330,9 @@ html
                     .seasons__label scrobbles
                   .columns.small-12
                     .seasons__hr
-                a(href="")
+                a(href="{{ fallListens.song.songUrl }}" target="_blank")
                   .truncate {{ fallListens.song.name }}
-                a(href="" class="small")
+                a(href="{{ fallListens.song.artistUrl }}" class="small" target="_blank")
                   .truncate {{ fallListens.song.artist }}
                 .row.collapse.seasons__header
                   .columns.medium-6.text-left
@@ -342,7 +342,7 @@ html
                     .seasons__label scrobbles
                   .columns.small-12
                     .seasons__hr
-                a(href="") {{ fallListens.artist.artist }}
+                a(href="{{ fallListens.artist.artistUrl }}" target="_blank") {{ fallListens.artist.artist }}
             .columns.medium-3.text-left
               .seasons__icon-wrapper.color-winter
                 .seasons__icon-content
@@ -360,9 +360,9 @@ html
                     .seasons__label scrobbles
                   .columns.small-12
                     .seasons__hr
-                a(href="")
+                a(href="{{ winterListens.album.albumUrl }}" target="_blank")
                   .truncate {{ winterListens.album.album }}
-                a(href="" class="small")
+                a(href="{{ winterListens.album.artistUrl }}" class="small" target="_blank")
                   .truncate {{ winterListens.album.artist }}
                 .row.collapse.seasons__header
                   .columns.medium-6.text-left
@@ -372,9 +372,9 @@ html
                     .seasons__label scrobbles
                   .columns.small-12
                     .seasons__hr
-                a(href="")
+                a(href="{{ winterListens.song.songUrl }}" target="_blank")
                   .truncate {{ winterListens.song.name }}
-                a(href="" class="small")
+                a(href="{{ winterListens.song.artistUrl }}" class="small" target="_blank")
                   .truncate {{ winterListens.song.artist }}
                 .row.collapse.seasons__header
                   .columns.medium-6.text-left
@@ -384,7 +384,7 @@ html
                     .seasons__label scrobbles
                   .columns.small-12
                     .seasons__hr
-                a(href="") {{ winterListens.artist.artist }}
+                a(href="{{ winterListens.artist.artistUrl }}" target="_blank") {{ winterListens.artist.artist }}
     .row.collapse.vh-100.fin(v-show="initialized")
       .columns.small-12.text-center.center-vertical
         .transition__title Fin
@@ -392,7 +392,8 @@ html
       .footer-end
         | Made by 
         a(href="http://aldogomez.me" target="_blank") Aldo Gomez. 
-        | If you'd like to contribute or report some bugs, go here.
+        | If you'd like to contribute or report some bugs, go 
+        a(href="https://github.com/gomezfx/your-year-on-lastfm/issues" target="_blank") here.
     script(src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js")
     script(src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.18.0/TweenMax.min.js")
     script(src="http://cdnjs.cloudflare.com/ajax/libs/ScrollMagic/2.0.5/ScrollMagic.min.js")
